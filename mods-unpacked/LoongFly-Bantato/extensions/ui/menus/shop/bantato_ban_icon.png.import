@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/bantato_ban_icon.png-de3839dff18fe74c20dbe1fa9fcd3e3a.stex"
+path="res://.import/bantato_ban_icon.png-d94c173201bd92daea138de6e3b78724.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://mods-unpacked/DragonFly-Bantato/extensions/ui/menus/shop/bantato_ban_icon.png"
-dest_files=[ "res://.import/bantato_ban_icon.png-de3839dff18fe74c20dbe1fa9fcd3e3a.stex" ]
+source_file="res://mods-unpacked/LoongFly-Bantato/extensions/ui/menus/shop/bantato_ban_icon.png"
+dest_files=[ "res://.import/bantato_ban_icon.png-d94c173201bd92daea138de6e3b78724.stex" ]
 
 [params]
 

@@ -1,0 +1,17 @@
+{
+	"name": "Bantato",
+	"namespace": "LoongFly",
+	"version_number": "1.0.0",
+	"description": "A mod made for Brotato that added a feature to ban items in the shop",
+	"website_url": "",
+	"dependencies": [],
+	"extra": {
+		"godot": {
+			"incompatibilities": [],
+			"authors": ["LoongFly"],
+			"compatible_mod_loader_version": ["6.3.0"],
+			"compatible_game_version": ["1.1.10.7"],
+			"config_defaults": {}
+		}
+	}
+}
