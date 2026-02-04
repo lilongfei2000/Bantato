@@ -13,11 +13,10 @@ func _ready() -> void:
 		# We'll need to extend shop_items_container.gd to handle this
 
 		# Setup banned items display
-		var banned_items = BantatoService.get_banned_items(player_index) if BantatoService else []
+		var banned_items = BantatoService.get_banned_items(player_index)
 		var player_gear_container = _get_gear_container(player_index)
 
-		if player_gear_container.has_method("set_bantato_banned_data"):
-			player_gear_container.set_bantato_banned_data(banned_items)
+		player_gear_container.set_bantato_banned_data(banned_items)
 
 		var banned_items_container = player_gear_container.bantato_banned_items_container if player_gear_container.has_method("get_bantato_container") else null
 

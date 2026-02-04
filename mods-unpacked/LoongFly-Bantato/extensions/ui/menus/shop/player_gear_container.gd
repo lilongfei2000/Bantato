@@ -3,20 +3,36 @@ extends "res://ui/menus/shop/player_gear_container.gd"
 # Access BantatoService
 onready var BantatoService = get_node("/root/ModLoader/LoongFly-Bantato/BantatoService")
 
+# Translation keys for UI strings
+const BANTATO_STR_BANNED_ITEMS = "BANTATO_BANNED_ITEMS"
+const BANTATO_STR_SWITCH_TO_BANNED = "BANTATO_SWITCH_TO_BANNED"
+const BANTATO_STR_SWITCH_TO_ITEMS = "BANTATO_SWITCH_TO_ITEMS"
+
 var bantato_banned_items_container: InventoryContainer
-var _button_on_bantato_banned_container
-var bantato_display_visible := false
+var _bantato_button_on_banned_container
+var _bantato_button_on_items_container
 
 
 func _ready() -> void:
 	# Setup Bantato banned items container
-	setup_bantato_banned_items_container()
+	bantato_setup_banned_items_container()
+	_bantato_button_on_items_container = bantato_add_button(items_container)
+	_button_on_items_container.text = BANTATO_STR_SWITCH_TO_BANNED
+	_button_on_items_container.connect("pressed", self, "_bantato_switch_container_display")
+
+	_bantato_button_on_banned_container = bantato_add_button(bantato_banned_items_container)
+	_bantato_button_on_banned_container.text = BANTATO_STR_SWITCH_TO_ITEMS
+	_button_on_banned_items_container.connect("pressed", self, "_bantato_switch_container_display")
 
 
-func setup_bantato_banned_items_container() -> void:
+func bantato_setup_banned_items_container() -> void:
 	"""Create a separate container for Bantato-banned items."""
 	if RunData.is_coop_run:
 		bantato_banned_items_container = load("res://ui/menus/shop/coop_inventory_container.tscn").instance()
+		items_container.add_constant_override("separation", 10)
+		bantato_banned_items_container.add_constant_override("separation", 10)
+		weapons_container.add_constant_override("separation", 10)
+		bantato_banned_items_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	else:
 		bantato_banned_items_container = load("res://ui/menus/shop/inventory_container.tscn").instance()
 
@@ -27,14 +43,9 @@ func setup_bantato_banned_items_container() -> void:
 
 	add_child(bantato_banned_items_container)
 	move_child(bantato_banned_items_container, items_container.get_index())
+	
 
-	# Create toggle button
-	_button_on_bantato_banned_container = add_button(bantato_banned_items_container)
-	_button_on_bantato_banned_container.text = "SHOW_BANNED"  # Translation key
-	_button_on_bantato_banned_container.connect("pressed", self, "_switch_bantato_container_display")
-
-
-func add_button(container: InventoryContainer) -> Node:
+func bantato_add_button(container: InventoryContainer) -> Node:
 	"""Add a toggle button to a container."""
 	var toggle_button = MyMenuButton.new()
 	if RunData.is_coop_run:
@@ -56,11 +67,11 @@ func add_button(container: InventoryContainer) -> Node:
 	return toggle_button
 
 
-func set_bantato_banned_data(banned_items: Array) -> void:
+func bantato_set_banned_data(banned_items: Array) -> void:
 	"""Set the Bantato-banned items data."""
-	bantato_banned_items_container.set_data("BANNED_ITEMS", -1, banned_items)
+	bantato_banned_items_container.set_data(BANTATO_STR_BANNED_ITEMS, -1, banned_items)
 
-
+# TODO: fix this
 func add_to_bantato_banned_container(item: ItemParentData) -> void:
 	"""Add an item to the Bantato banned items container."""
 	if bantato_banned_items_container and bantato_banned_items_container._elements:
@@ -69,26 +80,11 @@ func add_to_bantato_banned_container(item: ItemParentData) -> void:
 
 func _switch_bantato_container_display() -> void:
 	"""Toggle visibility of Bantato banned items container."""
-	if bantato_display_visible:
-		# Switch back to items
-		items_container.visible = true
-		_button_on_items_container.text = "SWITCH_TO_ITEMS"
-
-		bantato_banned_items_container.visible = false
-		_button_on_bantato_banned_container.text = "SHOW_BANNED"
-
-		items_container._elements.grab_focus()
-	else:
-		# Switch to banned items
+	if items_container.visible:
 		items_container.visible = false
-		_button_on_items_container.text = "SWITCH_TO_ITEMS"
-
 		bantato_banned_items_container.visible = true
-		_button_on_bantato_banned_container.text = "SWITCH_TO_ITEMS"
-
-		if bantato_banned_items_container._elements.get_child_count() > 0:
-			bantato_banned_items_container._elements.get_child(0).grab_focus()
-		else:
-			_button_on_bantato_banned_container.grab_focus()
-
-	bantato_display_visible = not bantato_display_visible
+		_bantato_button_on_banned_container.grab_focus()
+	else:
+		bantato_banned_items_container.visible = false
+		items_container.visible = true
+		_bantato_button_on_items_container.grab_focus()
