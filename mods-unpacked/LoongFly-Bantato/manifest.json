@@ -1,8 +1,8 @@
 {
 	"name": "Bantato",
 	"namespace": "LoongFly",
-	"version_number": "1.0.0",
-	"description": "A mod made for Brotato that added a feature to ban items in the shop",
+	"version_number": "2.0.0",
+	"description": "A mod for Brotato that adds a gold-based item/weapon banning system. Works alongside the game's built-in token-based ban system.",
 	"website_url": "",
 	"dependencies": [],
 	"extra": {
@@ -11,7 +11,11 @@
 			"authors": ["LoongFly"],
 			"compatible_mod_loader_version": ["6.3.0"],
 			"compatible_game_version": ["1.1.10.7"],
-			"config_defaults": {}
+			"config_defaults": {
+				"enable_bantato_ban": true,
+				"enable_weapon_banning": true,
+				"min_unbanned_items": 5
+			}
 		}
 	}
 }
