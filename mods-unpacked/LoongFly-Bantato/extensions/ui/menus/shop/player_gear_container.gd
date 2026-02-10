@@ -12,6 +12,8 @@ var bantato_banned_items_container: InventoryContainer
 var _bantato_button_on_banned_container
 var _bantato_button_on_items_container
 
+onready var _bantato_item_index: Dictionary = {}
+
 
 func _ready() -> void:
 	# Setup Bantato banned items container
@@ -67,18 +69,29 @@ func bantato_add_button(container: InventoryContainer) -> Node:
 	return toggle_button
 
 
-func bantato_set_banned_data(banned_items: Array) -> void:
+func bantato_set_banned_data(banned_data: Array) -> void:
 	"""Set the Bantato-banned items data."""
-	bantato_banned_items_container.set_data(BANTATO_STR_BANNED_ITEMS, -1, banned_items)
+	_bantato_item_index = {}
+	bantato_banned_items_container._label.text = BANTATO_STR_BANNED_ITEMS
+	for banned_item_data in banned_data:
+		var item_data = banned_item_data[0]
+		var prevent_count = banned_item_data[1]
+		bantato_banned_items_container._elements.add_element_with_count(item_data, prevent_count, false, 0.5)
+		_bantato_item_index[item_data.my_id] = _bantato_item_index.size()
 
-# TODO: fix this
-func add_to_bantato_banned_container(item: ItemParentData) -> void:
+
+func bantato_add_to_banned_container(item: ItemParentData) -> void:
 	"""Add an item to the Bantato banned items container."""
-	if bantato_banned_items_container and bantato_banned_items_container._elements:
-		bantato_banned_items_container._elements.add_element(item)
+	if _bantato_item_index.has(item.my_id):
+		var banned_items = bantato_banned_items_container._elements.get_children()
+		var index = _bantato_item_index[item.my_id]
+		banned_items[index].add_to_number()
+	else:
+		bantato_banned_items_container._elements.add_element(item, false, false)
+		_bantato_item_index[item.my_id] = _bantato_item_index.size()
 
 
-func _switch_bantato_container_display() -> void:
+func _bantato_switch_container_display() -> void:
 	"""Toggle visibility of Bantato banned items container."""
 	if items_container.visible:
 		items_container.visible = false

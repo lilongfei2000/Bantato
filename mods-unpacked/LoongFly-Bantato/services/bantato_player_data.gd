@@ -6,7 +6,7 @@ const MOD_NAME = "Bantato"
 const MOD_LOG = "BantatoPlayerData"
 
 # Banned items for this player with prevent counters
-# Structure: {item_id: {item: ItemParentData, prevent_count: int}}
+# Structure: {item_id: [ItemParentData, int]}
 var _banned_items: Dictionary = {}
 
 # Unbanned item pools: {tier: {type: [ItemParentData, ...]}}
@@ -35,10 +35,7 @@ func _initialize_pools(tier_count: int) -> void:
 
 func ban(item: ItemParentData) -> void:
 	"""Ban an item and remove it from pools."""
-	_banned_items[item.my_id] = {
-		"item": item.duplicate(),
-		"prevent_count": 0
-	}
+	_banned_items[item.my_id] = [item, 0]
 	_remove_item_from_pools(item)
 
 
@@ -46,7 +43,7 @@ func unban(item_id: String) -> ItemParentData:
 	"""Unban an item and add it back to pools. Returns the unbanned item or null."""
 	if _banned_items.has(item_id):
 		var item_data = _banned_items[item_id]
-		var item = item_data.item
+		var item = item_data[0]
 		_banned_items.erase(item_id)
 		_add_item_to_pools(item)
 		return item
@@ -64,7 +61,7 @@ func get_banned_items() -> Array:
 	"""Get all banned items."""
 	var items = []
 	for item_data in _banned_items.values():
-		items.append(item_data.item)
+		items.append(item_data[0])
 	return items
 
 
@@ -96,13 +93,13 @@ func clear() -> void:
 
 func increment_prevent_count(item_id: String) -> void:
 	"""Increment the prevent counter for a banned item."""
-	_banned_items[item_id].prevent_count += 1
+		_banned_items[item_id][1] += 1
 
 
 func get_prevent_count(item_id: String) -> int:
 	"""Get the prevent counter for a banned item."""
 	if _banned_items.has(item_id):
-		return _banned_items[item_id].prevent_count
+		return _banned_items[item_id][1]
 	return 0
 
 
@@ -110,10 +107,7 @@ func restore_banned_items(items: Array) -> void:
 	"""Restore banned items from deserialized data and update pools."""
 	_banned_items.clear()
 	for item in items:
-		_banned_items[item.my_id] = {
-			"item": item,
-			"prevent_count": 0
-		}
+		_banned_items[item.my_id] = [item, 0]
 		_remove_item_from_pools(item)
 
 
@@ -123,7 +117,7 @@ func serialize() -> Array:
 	"""Serialize banned items for saving."""
 	var serialized = []
 	for item_data in _banned_items.values():
-		serialized.append(item_data.item.serialize())
+		serialized.append(item_data[0].serialize())
 	return serialized
 
 
