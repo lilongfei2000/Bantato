@@ -1,11 +1,11 @@
 extends "res://ui/menus/shop/item_popup.gd"
 
 
-func display_banned_element(element: InventoryElement) -> void :
-	display_banned_item_data(element.item, element, true)
+func bantato_display_element(element: InventoryElement) -> void :
+	bantato_display_item_data(element.item, element, true)
 
 
-func display_banned_item_data(item_data: ItemParentData, attachment: Control, is_inventory_element: = false) -> void :
+func bantato_display_item_data(item_data: ItemParentData, attachment: Control, is_inventory_element: = false) -> void :
 	_item_data = item_data
 	_attachment = attachment
 	_is_inventory_element = is_inventory_element
