@@ -76,8 +76,8 @@ func bantato_set_banned_data(banned_data: Array) -> void:
 	for banned_item_data in banned_data:
 		var item_data = banned_item_data[0]
 		var prevent_count = banned_item_data[1]
-		bantato_banned_items_container._elements.add_element_with_count(item_data, prevent_count, false, 0.5)
 		_bantato_item_index[item_data.my_id] = _bantato_item_index.size()
+		bantato_banned_items_container._elements.add_element_with_count(item_data, prevent_count, false, 0.5)
 
 
 func bantato_add_to_banned_container(item: ItemParentData) -> void:
@@ -87,8 +87,8 @@ func bantato_add_to_banned_container(item: ItemParentData) -> void:
 		var index = _bantato_item_index[item.my_id]
 		banned_items[index].add_to_number()
 	else:
-		bantato_banned_items_container._elements.add_element(item, false, false)
 		_bantato_item_index[item.my_id] = _bantato_item_index.size()
+		bantato_banned_items_container._elements.add_element(item, false, false)
 
 
 func _bantato_switch_container_display() -> void:
