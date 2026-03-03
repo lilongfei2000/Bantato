@@ -5,24 +5,7 @@ onready var BantatoService = get_node("/root/ModLoader/LoongFly-Bantato/BantatoS
 
 # Hook _get_rand_item_for_wave to filter out Bantato-banned items
 func _get_rand_item_for_wave(wave: int, player_index: int, type: int, args: GetRandItemForWaveArgs) -> ItemParentData:
-	# If BantatoService exists and has banned items, use filtered pool
-	if BantatoService:
-		# Get the tier for this wave
-		var tier = get_tier(wave, type)
-
-		# Get Bantato's filtered pool
-		var pool = BantatoService.get_unbanned_pool(tier, type, player_index)
-
-		# Apply exclusions from args
-		for shop_item in args.excluded_items:
-			pool = remove_element_by_id(pool, shop_item[0])
-
-		# If pool has items, pick from it
-		if pool.size() > 0:
-			return Utils.get_rand_element(pool)
-
-	# Fallback to base implementation
-	return ._get_rand_item_for_wave(wave, player_index, type, args)
+	bantato_get_rand_item_retry(wave, player_index, type, args)
 
 
 # ==================== Method A: Simple Retry Approach ====================
@@ -167,8 +150,8 @@ func bantato_get_rand_item_retry(wave: int, player_index: int, type: int, args: 
 		pool = remove_element_by_id_with_item(pool, item)
 
 	# Retry loop: pick item, check if banned by Bantato, remove and retry if needed
-	while pool.size() > 0 or backup_pool.size() > 0:
-		var elt
+	var elt
+	while true:
 		var current_pool = pool
 		
 		if pool.size() == 0:
@@ -178,13 +161,9 @@ func bantato_get_rand_item_retry(wave: int, player_index: int, type: int, args: 
 		elt = Utils.get_rand_element(current_pool)
 		
 		# Check if banned by Bantato
-		if BantatoService and BantatoService.is_item_banned(elt, player_index):
+		if BantatoService.is_item_banned(elt, player_index):
 			# Increment prevent counter
 			BantatoService.increment_prevent_count(elt.my_id, player_index)
-			# Remove from pools
-			pool = remove_element_by_id_with_item(pool, elt)
-			backup_pool = remove_element_by_id_with_item(backup_pool, elt)
-			# Continue loop to retry
 			continue
 		
 		# Item is not banned, apply special handling and return
@@ -198,6 +177,8 @@ func bantato_get_rand_item_retry(wave: int, player_index: int, type: int, args: 
 		
 		if elt != null and elt.my_id == "item_axolotl" and elt.effects.size() > 0 and "stats_swapped" in elt.effects[0]:
 			elt.effects[0].stats_swapped = []
+
+		break
 		
 	return apply_item_effect_modifications(elt, player_index)
 
@@ -352,7 +333,7 @@ func bantato_get_rand_item_incremental(wave: int, player_index: int, type: int, 
 		elt = Utils.get_rand_element(current_pool)
 		
 		# Check if banned by Bantato
-		if BantatoService and BantatoService.is_item_banned(elt, player_index):
+		if BantatoService.is_item_banned(elt, player_index):
 			# Increment prevent counter
 			BantatoService.increment_prevent_count(elt.my_id, player_index)
 			# Remove from pools
