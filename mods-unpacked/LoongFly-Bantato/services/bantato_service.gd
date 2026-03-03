@@ -6,7 +6,6 @@ class_name BantatoService
 
 const MOD_NAME = "Bantato"
 const MOD_LOG = "BantatoService"
-const MIN_UNBANNED_NUM = 5
 
 const BantatoPlayerData = preload("res://mods-unpacked/LoongFly-Bantato/services/bantato_player_data.gd")
 
@@ -20,7 +19,7 @@ func _init() -> void:
 
 # ==================== Public API: Banning ====================
 
-func ban_item(item: ItemParentData, player_index: int) -> void:
+func ban(item: ItemParentData, player_index: int) -> void:
 	"""
 	Ban an item for a player.
 
@@ -28,10 +27,6 @@ func ban_item(item: ItemParentData, player_index: int) -> void:
 		item: The item to ban
 		player_index: The player's index (0-3)
 	"""
-	if not is_bannable(item, player_index):
-		ModLoaderLog.warning("Item %s is not bannable for player %d" % [item.my_id, player_index], MOD_LOG)
-		return
-
 	# Ban the item
 	_players[player_index].ban(item)
 
@@ -42,7 +37,7 @@ func ban_item(item: ItemParentData, player_index: int) -> void:
 	ModLoaderLog.info("Banned item %s for player %d (cost: %d gold)" % [item.my_id, player_index, price], MOD_LOG)
 
 
-func unban_item(item_id: String, player_index: int) -> void:
+func unban(item_id: String, player_index: int) -> void:
 	"""
 	Unban an item for a player.
 
@@ -75,6 +70,10 @@ func get_banned_items(player_index: int) -> Array:
 		Array of ItemParentData objects
 	"""
 	return _players[player_index].get_banned_items()
+
+
+func get_banned_data(player_index: int) -> Dictionary:
+	return _players[player_index].get_banned_data()
 
 
 func is_item_banned(item: ItemParentData, player_index: int) -> bool:
@@ -116,11 +115,9 @@ func get_prevent_count(item_id: String, player_index: int) -> int:
 	return _players[player_index].get_prevent_count(item_id)
 
 
-func get_ban_price(item: ItemParentData, player_index: int) -> int:
+func get_ban_price(item: ShopItem, player_index: int) -> int:
 	"""
 	Calculate the gold cost to ban an item.
-
-	Formula: base_value * (banned_count / (total_count - MIN_UNBANNED_NUM))
 
 	Args:
 		item: The item to calculate price for
@@ -129,17 +126,7 @@ func get_ban_price(item: ItemParentData, player_index: int) -> int:
 	Returns:
 		The gold cost (minimum 1)
 	"""
-	var total_num = _get_total_item_count(item)
-	var unbanned_num = _get_unbanned_item_count(item, player_index)
-	var banned_num = total_num - unbanned_num
-
-	if total_num <= MIN_UNBANNED_NUM:
-		return 999999  # Effectively unaffordable
-
-	var factor = float(banned_num) / (total_num - MIN_UNBANNED_NUM)
-	var base_value = ItemService.get_value(RunData.current_wave, item.value, player_index, true, item is WeaponData, item.my_id)
-
-	return max(1, int(base_value * factor))
+	return _players[player_index].get_ban_price(item)
 
 
 func is_bannable(item: ItemParentData, player_index: int) -> bool:
@@ -148,7 +135,6 @@ func is_bannable(item: ItemParentData, player_index: int) -> bool:
 
 	Requirements:
 	- Item is not already banned
-	- Player has enough gold to ban it
 	- At least MIN_UNBANNED_NUM items of this tier/type remain
 
 	Args:
@@ -159,21 +145,7 @@ func is_bannable(item: ItemParentData, player_index: int) -> bool:
 		True if the item can be banned, false otherwise
 	"""
 	# Check if already banned
-	if _players[player_index].is_banned(item):
-		return false
-
-	# Check if enough items remain
-	var unbanned_count = _get_unbanned_item_count(item, player_index)
-	if unbanned_count <= MIN_UNBANNED_NUM:
-		return false
-
-	# Check if player has enough gold
-	var price = get_ban_price(item, player_index)
-	var player_gold = RunData.get_player_currency(player_index)
-	if player_gold < price:
-		return false
-
-	return true
+	return _players[player_index].is_bannable(item)
 
 
 func get_unbanned_pool(tier: int, type: int, player_index: int) -> Array:
@@ -279,7 +251,7 @@ func _get_total_item_count(item: ItemParentData) -> int:
 	elif item is WeaponData:
 		return tier_data[ItemService.TierData.WEAPONS].size()
 
-	return 0
+	return 1
 
 
 func _get_unbanned_item_count(item: ItemParentData, player_index: int) -> int:

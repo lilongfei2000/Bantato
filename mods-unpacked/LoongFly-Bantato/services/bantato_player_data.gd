@@ -4,13 +4,15 @@ extends Reference
 
 const MOD_NAME = "Bantato"
 const MOD_LOG = "BantatoPlayerData"
+const MIN_UNBANNED_NUM = 5
 
 # Banned items for this player with prevent counters
 # Structure: {item_id: [ItemParentData, int]}
-var _banned_items: Dictionary = {}
+var _banned_data: Dictionary = {}
 
-# Unbanned item pools: {tier: {type: [ItemParentData, ...]}}
-var _unbanned_pools: Dictionary = {}
+# Unbanned item pools: [tier][type][ItemParentData, ...]
+var _unbanned_pools: Array = []
+var _bannable_nums: Array = []
 
 
 func _init(player_index: int, tier_count: int) -> void:
@@ -22,29 +24,46 @@ func _init(player_index: int, tier_count: int) -> void:
 func _initialize_pools(tier_count: int) -> void:
 	"""Initialize unbanned item pools from ItemService."""
 	_unbanned_pools.clear()
-	
+	_bannable_nums.clear()
+
+	var pool: Array
+	var item_ids: Dictionary
+	var weapon_ids: Dictionary
+	var item_bannable_num: int
+
 	for tier in tier_count:
-		_unbanned_pools[tier] = {
-			ItemService.TierData.ALL_ITEMS: ItemService._tiers_data[tier][ItemService.TierData.ALL_ITEMS].duplicate(),
-			ItemService.TierData.ITEMS: ItemService._tiers_data[tier][ItemService.TierData.ITEMS].duplicate(),
-			ItemService.TierData.WEAPONS: ItemService._tiers_data[tier][ItemService.TierData.WEAPONS].duplicate()
-		}
+		pool = ItemService.get_pool(tier, ItemService.TierData.ITEMS)
+		item_ids = {}
+		item_bannable_num = 0
+		for item in pool:
+			item_ids[item.my_id] = true
+			if item.max_nb == -1:
+				item_bannable_num += 1
+		
+		pool = ItemService.get_pool(tier, ItemService.TierData.WEAPONS)
+		var weapon_ids = {}
+		for weapon in pool:
+			weapon_ids[weapon.my_id] = true
+
+		_unbanned_pools.append([item_ids, weapon_ids])
+		_bannable_nums.append([item_bannable_num, weapon_ids.size()])
 
 
 # ==================== Public API: Banning ====================
 
 func ban(item: ItemParentData) -> void:
 	"""Ban an item and remove it from pools."""
-	_banned_items[item.my_id] = [item, 0]
+	_banned_data[item.my_id] = [item, 0]
 	_remove_item_from_pools(item)
 
 
 func unban(item_id: String) -> ItemParentData:
 	"""Unban an item and add it back to pools. Returns the unbanned item or null."""
-	if _banned_items.has(item_id):
-		var item_data = _banned_items[item_id]
+	# TODO: implement this correctly
+	if _banned_data.has(item_id):
+		var item_data = _banned_data[item_id]
 		var item = item_data[0]
-		_banned_items.erase(item_id)
+		_banned_data.erase(item_id)
 		_add_item_to_pools(item)
 		return item
 	return null
@@ -54,60 +73,70 @@ func unban(item_id: String) -> ItemParentData:
 
 func is_banned(item: ItemParentData) -> bool:
 	"""Check if an item is banned."""
-	return _banned_items.has(item.my_id)
+	return _banned_data.has(item.my_id)
+
+
+func is_bannable(item: ItemParentData) -> bool:
+	var type = 1 if item is WeaponData else 0
+	if _bannable_nums[item.tier][type] <= MIN_UNBANNED_NUM or is_banned(item):
+		return false
+	return true
+
+
+func get_ban_price(shop_item: ShopItem) -> int:
+	var type = 1 if shop_item.item_data is WeaponData else 0
+	var tier = shop_item.item_data.tier
+	var bannable_num = _bannable_nums[type][tier]
+	return max(1, int(float(shop_item.value) / (bannable_num - 1))
 
 
 func get_banned_items() -> Array:
 	"""Get all banned items."""
 	var items = []
-	for item_data in _banned_items.values():
+	for item_data in _banned_data.values():
 		items.append(item_data[0])
 	return items
 
 
+func get_banned_data() -> Dictionary:
+	return _banned_data
+
+
 func get_unbanned_pool(tier: int, type: int) -> Array:
 	"""Get the pool of unbanned items for a specific tier and type."""
-	if not _unbanned_pools.has(tier):
-		return []
-	if not _unbanned_pools[tier].has(type):
-		return []
 	return _unbanned_pools[tier][type].duplicate()
 
 
-func get_unbanned_count(tier: int, item_type: int) -> int:
+func get_unbanned_count(tier: int, type: int) -> int:
 	"""Get count of unbanned items for a tier and type (ITEMS or WEAPONS)."""
-	if not _unbanned_pools.has(tier):
-		return 0
-	if not _unbanned_pools[tier].has(item_type):
-		return 0
-	return _unbanned_pools[tier][item_type].size()
+	return _unbanned_pools[tier][type].size()
 
 
 # ==================== Public API: Lifecycle ====================
 
 func clear() -> void:
 	"""Clear all banned items and reset pools."""
-	_banned_items.clear()
+	_banned_data.clear()
 	_initialize_pools(_unbanned_pools.size())
 
 
 func increment_prevent_count(item_id: String) -> void:
 	"""Increment the prevent counter for a banned item."""
-		_banned_items[item_id][1] += 1
+		_banned_data[item_id][1] += 1
 
 
 func get_prevent_count(item_id: String) -> int:
 	"""Get the prevent counter for a banned item."""
-	if _banned_items.has(item_id):
-		return _banned_items[item_id][1]
+	if _banned_data.has(item_id):
+		return _banned_data[item_id][1]
 	return 0
 
 
-func restore_banned_items(items: Array) -> void:
+func restore_banned_data(items: Array) -> void:
 	"""Restore banned items from deserialized data and update pools."""
-	_banned_items.clear()
+	_banned_data.clear()
 	for item in items:
-		_banned_items[item.my_id] = [item, 0]
+		_banned_data[item.my_id] = [item, 0]
 		_remove_item_from_pools(item)
 
 
@@ -116,7 +145,7 @@ func restore_banned_items(items: Array) -> void:
 func serialize() -> Array:
 	"""Serialize banned items for saving."""
 	var serialized = []
-	for item_data in _banned_items.values():
+	for item_data in _banned_data.values():
 		serialized.append(item_data[0].serialize())
 	return serialized
 
@@ -125,9 +154,6 @@ func serialize() -> Array:
 
 func _remove_item_from_pools(item: ItemParentData) -> void:
 	"""Remove an item from all unbanned pools."""
-	if not _unbanned_pools.has(item.tier):
-		return
-	
 	var pools = _unbanned_pools[item.tier]
 	_remove_from_list(pools[ItemService.TierData.ALL_ITEMS], item)
 	
@@ -138,10 +164,7 @@ func _remove_item_from_pools(item: ItemParentData) -> void:
 
 
 func _add_item_to_pools(item: ItemParentData) -> void:
-	"""Add an item back to unbanned pools."""
-	if not _unbanned_pools.has(item.tier):
-		return
-	
+	"""Add an item back to unbanned pools."""	
 	var pools = _unbanned_pools[item.tier]
 	pools[ItemService.TierData.ALL_ITEMS].append(item.duplicate())
 	

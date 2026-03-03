@@ -129,7 +129,7 @@ func bantato_update(p_item_data: ItemParentData) -> void:
 	# Check if item is bannable via Bantato
 	if BantatoService.is_bannable(item_data, player_index):
 		# Update price
-		bantato_ban_value = BantatoService.get_ban_price(item_data, player_index)
+		bantato_ban_value = BantatoService.get_ban_price(self, player_index)
 		_bantato_ban_button.set_value(bantato_ban_value, RunData.get_player_gold(player_index))
 		_bantato_ban_button.reinitialize_colors(player_index)
 		_bantato_ban_button.show()
