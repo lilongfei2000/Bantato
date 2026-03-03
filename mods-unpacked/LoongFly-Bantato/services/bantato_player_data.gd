@@ -54,7 +54,13 @@ func _initialize_pools(tier_count: int) -> void:
 func ban(item: ItemParentData) -> void:
 	"""Ban an item and remove it from pools."""
 	_banned_data[item.my_id] = [item, 0]
-	_remove_item_from_pools(item)
+	if item is ItemData:
+		_unbanned_pools[item.tier][0].erase(item.my_id)
+		if item.max_nb == -1:
+			_bannable_nums[item.tier][0] -= 1
+	elif item is WeaponData:
+		_unbanned_pools[item.tier][1].erase(item.my_id)
+		_bannable_nums[item.tier][1] -= 1
 
 
 func unban(item_id: String) -> ItemParentData:
@@ -86,7 +92,7 @@ func is_bannable(item: ItemParentData) -> bool:
 func get_ban_price(shop_item: ShopItem) -> int:
 	var type = 1 if shop_item.item_data is WeaponData else 0
 	var tier = shop_item.item_data.tier
-	var bannable_num = _bannable_nums[type][tier]
+	var bannable_num = _bannable_nums[tier][type]
 	return max(1, int(float(shop_item.value) / (bannable_num - 1))
 
 

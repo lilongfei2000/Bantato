@@ -19,7 +19,7 @@ func _init() -> void:
 
 # ==================== Public API: Banning ====================
 
-func ban(item: ItemParentData, player_index: int) -> void:
+func ban(shop_item: ShopItem, player_index: int) -> void:
 	"""
 	Ban an item for a player.
 
@@ -28,12 +28,9 @@ func ban(item: ItemParentData, player_index: int) -> void:
 		player_index: The player's index (0-3)
 	"""
 	# Ban the item
-	_players[player_index].ban(item)
-
+	_players[player_index].ban(shop_item.item_data)
 	# Deduct gold from player
-	var price = get_ban_price(item, player_index)
-	RunData.remove_currency(price, player_index)
-
+	RunData.remove_currency(shop_item.bantato_ban_value, player_index)
 	ModLoaderLog.info("Banned item %s for player %d (cost: %d gold)" % [item.my_id, player_index, price], MOD_LOG)
 
 
