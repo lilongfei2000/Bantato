@@ -8,8 +8,7 @@ func get_state() -> Dictionary:
 	var state = .get_state()
 
 	# Add Bantato data to save state with unique key
-	if BantatoService:
-		state["loongfly_bantato_mod_data"] = BantatoService.serialize()
+	state["loongfly_bantato_mod_data"] = BantatoService.serialize()
 
 	return state
 
@@ -19,7 +18,7 @@ func resume_from_state(state: Dictionary) -> void:
 	.resume_from_state(state)
 
 	# Restore Bantato data if present
-	if state.has("loongfly_bantato_mod_data") and BantatoService:
+	if state.has("loongfly_bantato_mod_data"):
 		BantatoService.deserialize(state["loongfly_bantato_mod_data"])
 
 
@@ -28,6 +27,5 @@ func reset(restart: bool = false) -> void:
 	.reset(restart)
 
 	# Initialize BantatoService for the new run
-	if BantatoService:
-		var player_count = get_player_count()
-		BantatoService.reset_run(player_count)
+	var player_count = get_player_count()
+	BantatoService.reset_run(player_count)
