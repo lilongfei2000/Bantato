@@ -69,15 +69,15 @@ func bantato_add_button(container: InventoryContainer) -> Node:
 	return toggle_button
 
 
-func bantato_set_banned_data(banned_data: Array) -> void:
+func bantato_set_banned_data(banned_data: Dictionary) -> void:
 	"""Set the Bantato-banned items data."""
 	_bantato_item_index = {}
 	bantato_banned_items_container._label.text = BANTATO_STR_BANNED_ITEMS
-	for banned_item_data in banned_data:
-		var item_data = banned_item_data[0]
-		var prevent_count = banned_item_data[1]
-		_bantato_item_index[item_data.my_id] = _bantato_item_index.size()
-		bantato_banned_items_container._elements.add_element_with_count(item_data, prevent_count, false, 0.5)
+	for id in banned_data.keys():
+		var item = ItemService.bantato_get_item_by_id(id)
+		var prevent_count = banned_data[id]
+		_bantato_item_index[id] = _bantato_item_index.size()
+		bantato_banned_items_container._elements.add_element_with_count(item, prevent_count, false, 0.5)
 
 
 func bantato_add_to_banned_container(item: ItemParentData) -> void:
@@ -88,6 +88,8 @@ func bantato_add_to_banned_container(item: ItemParentData) -> void:
 		banned_items[index].add_to_number()
 	else:
 		_bantato_item_index[item.my_id] = _bantato_item_index.size()
+		if item.is_cursed:
+			item = ItemService.bantato_get_item_by_id(item.my_id)
 		bantato_banned_items_container._elements.add_element(item, false, false)
 
 

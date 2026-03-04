@@ -8,6 +8,12 @@ func _get_rand_item_for_wave(wave: int, player_index: int, type: int, args: GetR
 	bantato_get_rand_item_retry(wave, player_index, type, args)
 
 
+func bantato_get_item_by_id(id):
+	if is_weapon_id(id):
+		return get_weapon_from_weapon_id(id)
+	return get_item_from_id(id)
+
+
 # ==================== Method A: Simple Retry Approach ====================
 # Picks item, checks if banned, retries if needed
 # Increments prevent_count for each individual banned item encounter

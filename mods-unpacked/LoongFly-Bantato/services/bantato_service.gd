@@ -56,19 +56,6 @@ func unban(item_id: String, player_index: int) -> void:
 
 # ==================== Public API: Queries ====================
 
-func get_banned_items(player_index: int) -> Array:
-	"""
-	Get all banned items for a player.
-
-	Args:
-		player_index: The player's index (0-3)
-
-	Returns:
-		Array of ItemParentData objects
-	"""
-	return _players[player_index].get_banned_items()
-
-
 func get_banned_data(player_index: int) -> Dictionary:
 	return _players[player_index].get_banned_data()
 
@@ -159,7 +146,6 @@ func get_unbanned_pool(tier: int, type: int, player_index: int) -> Array:
 	"""
 	return _players[player_index].get_unbanned_pool(tier, type)
 
-
 # ==================== Public API: Lifecycle ====================
 
 func reset_run(player_count: int = 1) -> void:
@@ -170,11 +156,9 @@ func reset_run(player_count: int = 1) -> void:
 		player_count: Number of players in the run
 	"""
 	_players.clear()
-	
-	var tier_count = ItemService._tiers_data.size()
-	
+
 	for i in range(player_count):
-		var player_data = BantatoPlayerData.new(i, tier_count)
+		var player_data = BantatoPlayerData.new(i)
 		_players.append(player_data)
 
 	ModLoaderLog.info("Reset Bantato data for %d player(s)" % player_count, MOD_LOG)
@@ -193,7 +177,7 @@ func serialize() -> Array:
 	var serialized_data = []
 
 	for player in _players:
-		serialized_data.append(player.serialize())
+		serialized_data.append(player.get_banned_data())
 
 	return serialized_data
 
@@ -206,26 +190,12 @@ func deserialize(data: Array) -> void:
 		data: Array containing serialized data for each player
 	"""
 	_players.clear()
-	
-	var tier_count = ItemService._tiers_data.size()
 
 	for player_index in range(data.size()):
-		var player_data = BantatoPlayerData.new(player_index, tier_count)
+		var player_data = BantatoPlayerData.new(player_index)
 		
 		if data[player_index].size() > 0:
-			var restored_items = []
-			for serialized_item in data[player_index]:
-				var item_data = ItemService.get_element(ItemService.items, serialized_item.my_id)
-				
-				if item_data == null:
-					item_data = ItemService.get_element(ItemService.weapons, serialized_item.my_id)
-				
-				if item_data != null:
-					item_data = item_data.duplicate()
-					item_data.deserialize_and_merge(serialized_item)
-					restored_items.append(item_data)
-			
-			player_data.restore_banned_items(restored_items)
+			player_data.restore_banned_data(data[player_index])
 		
 		_players.append(player_data)
 
