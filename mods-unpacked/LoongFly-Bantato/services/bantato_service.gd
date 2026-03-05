@@ -13,6 +13,7 @@ const BantatoPlayerData = preload("res://mods-unpacked/LoongFly-Bantato/services
 # Player data objects: [BantatoPlayerData, ...] indexed by player_index
 var _players: Array = []
 var _all_items: Dictionary = {}
+var _bannable_nums: Array = []
 
 
 func _init() -> void:
@@ -24,6 +25,19 @@ func _init_all_items() -> void:
 		_all_items[item.my_id] = item
 	for weapon in ItemService.weapons:
 		_all_items[weapon.my_id] = weapon
+
+
+func _init_nums() -> void:
+	for tier in NUM_TIER:
+		var item_pool = ItemService.get_pool(tier, ItemService.TierData.ITEMS)
+		var item_bannable_num = 0
+		for item in item_pool:
+			if item.max_nb == -1:
+				item_bannable_num += 1
+		
+		var weapon_pool = ItemService.get_pool(tier, ItemService.TierData.WEAPONS)
+
+		_bannable_nums.append([item_bannable_num, weapon_pool.size()])
 
 
 # ==================== Public API: Banning ====================
@@ -171,12 +185,15 @@ func reset_run(player_count: int = 1) -> void:
 	"""
 	if _all_items.size() == 0:
 		_init_all_items()
-		
+
+	if _bannable_nums.size() == 0:
+		_init_nums()
+
 	_players.clear()
 
 	for i in range(player_count):
 		var player_data = BantatoPlayerData.new(i)
-		_players.append(player_data)
+		_players.append(player_data, _bannable_nums.duplicate())
 
 	ModLoaderLog.info("Reset Bantato data for %d player(s)" % player_count, MOD_LOG)
 

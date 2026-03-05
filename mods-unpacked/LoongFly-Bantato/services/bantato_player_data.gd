@@ -12,27 +12,12 @@ var _banned_data: Dictionary = {}
 
 # Unbanned item pools: [tier][type]{ItemParentData.my_id: true}
 var _unbanned_pools: Array = [] # TODO: check if this pool is necessary
-var _bannable_nums: Array = []
+var _bannable_nums: Array
 
 
-func _init(player_index: int) -> void:
-	_init_nums()
+func _init(player_index: int, nums: Array) -> void:
+	_bannable_nums = nums
 	ModLoaderLog.info("Player %d data initialized" % player_index, MOD_LOG)
-
-
-func _init_nums() -> void:
-	var tier_count = ItemService._tiers_data.size()
-	for tier in tier_count:
-		var item_pool = ItemService.get_pool(tier, ItemService.TierData.ITEMS)
-		var item_bannable_num = 0
-		for item in item_pool:
-			if item.max_nb == -1:
-				item_bannable_num += 1
-		
-		var weapon_pool = ItemService.get_pool(tier, ItemService.TierData.WEAPONS)
-
-		_bannable_nums.append([item_bannable_num, weapon_pool.size()])
-
 
 # ==================== Public API: Banning ====================
 
