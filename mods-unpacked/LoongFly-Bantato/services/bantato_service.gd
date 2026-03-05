@@ -53,7 +53,7 @@ func ban(shop_item: ShopItem, player_index: int) -> void:
 	# Ban the item
 	_players[player_index].ban(shop_item.item_data)
 	# Deduct gold from player
-	RunData.remove_currency(shop_item.bantato_ban_value, player_index)
+	RunData.remove_gold(shop_item.bantato_ban_value, player_index)
 	ModLoaderLog.info("Banned item %s for player %d (cost: %d gold)" % [item.my_id, player_index, price], MOD_LOG)
 
 
