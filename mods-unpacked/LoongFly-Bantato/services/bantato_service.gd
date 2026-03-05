@@ -191,7 +191,7 @@ func reset_run(player_count: int = 1) -> void:
 	_players.clear()
 
 	for i in range(player_count):
-		var player_data = BantatoPlayerData.new(i, _bannable_nums.duplicate())
+		var player_data = BantatoPlayerData.new(i, {}, _bannable_nums.duplicate())
 		_players.append(player_data)
 
 	ModLoaderLog.info("Reset Bantato data for %d player(s)" % player_count, MOD_LOG)
@@ -210,7 +210,7 @@ func serialize() -> Array:
 	var serialized_data = []
 
 	for player in _players:
-		serialized_data.append(player.get_banned_data())
+		serialized_data.append(player.serialize())
 
 	return serialized_data
 
@@ -225,10 +225,9 @@ func deserialize(data: Array) -> void:
 	_players.clear()
 
 	for player_index in range(data.size()):
-		var player_data = BantatoPlayerData.new(player_index)
-		
-		if data[player_index].size() > 0:
-			player_data.restore_banned_data(data[player_index])
+		var banned_data = data[player_index]['banned_data']
+		var bannable_nums = data[player_index]['bannable_nums']
+		var player_data = BantatoPlayerData.new(player_index, banned_data, bannable_nums)
 		
 		_players.append(player_data)
 

@@ -8,15 +8,16 @@ const MIN_UNBANNED_NUM = ItemService.NB_SHOP_ITEMS * 2
 
 # Banned items for this player with prevent counters
 # Structure: {item_id: int}
-var _banned_data: Dictionary = {}
+var _banned_data: Dictionary
 
 # Unbanned item pools: [tier][type]{ItemParentData.my_id: true}
 var _unbanned_pools: Array = [] # TODO: check if this pool is necessary
 var _bannable_nums: Array
 
 
-func _init(player_index: int, nums: Array) -> void:
+func _init(player_index: int, data: Dictionary = {}, nums: Array = []) -> void:
 	_bannable_nums = nums
+	_banned_data = data
 	ModLoaderLog.info("Player %d data initialized" % player_index, MOD_LOG)
 
 # ==================== Public API: Banning ====================
@@ -81,19 +82,11 @@ func clear() -> void:
 
 # ==================== Serialization ====================
 
-func restore_banned_data(data: Dictionary) -> void:
-	"""Restore banned items from deserialized data and update pools."""
-	_banned_data = data
-	for id in data:
-		var item
-		if ItemService.is_item_id(id):
-			item = ItemService.get_item_from_id(id)
-		elif ItemService.is_weapon_id(id):
-			item = ItemService.get_weapon_from_weapon_id(id)
-		else:
-			continue
-		_update_bannable_num(item)
-
+func serialize() -> Dictionary:
+	return {
+		'banned_data': _banned_data,
+		'bannable_nums': _bannable_nums
+	}
 
 # ==================== Private Helpers ====================
 
