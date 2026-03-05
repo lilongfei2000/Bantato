@@ -74,7 +74,7 @@ func bantato_set_banned_data(banned_data: Dictionary) -> void:
 	_bantato_item_index = {}
 	bantato_banned_items_container._label.text = BANTATO_STR_BANNED_ITEMS
 	for id in banned_data.keys():
-		var item = ItemService.bantato_get_item_by_id(id)
+		var item = BantatoService.get_item_by_id(id)
 		var prevent_count = banned_data[id]
 		_bantato_item_index[id] = _bantato_item_index.size()
 		bantato_banned_items_container._elements.add_element_with_count(item, prevent_count, false, 0.5)
@@ -89,7 +89,7 @@ func bantato_add_to_banned_container(item: ItemParentData) -> void:
 	else:
 		_bantato_item_index[item.my_id] = _bantato_item_index.size()
 		if item.is_cursed:
-			item = ItemService.bantato_get_item_by_id(item.my_id)
+			item = BantatoService.get_item_by_id(item.my_id)
 		bantato_banned_items_container._elements.add_element(item, false, false)
 
 
