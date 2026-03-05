@@ -109,6 +109,7 @@ func bantato_enable_ban_focus()->void :
 func deactivate() -> void:
 	"""Deactivate the shop item and both ban buttons."""
 	_bantato_ban_button.disable()
+	_bantato_ban_button.pressed = false
 	.deactivate()  # Call base deactivate (handles game's ban button)
 
 
