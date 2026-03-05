@@ -58,7 +58,19 @@ func get_banned_data() -> Dictionary:
 
 func get_unbanned_pool(tier: int, type: int) -> Array:
 	"""Get the pool of unbanned items for a specific tier and type."""
-	return _unbanned_pools[tier][type].duplicate()
+	pass
+
+
+func get_prevent_count(item_id: String) -> int:
+	"""Get the prevent counter for a banned item."""
+	if _banned_data.has(item_id):
+		return _banned_data[item_id]
+	return 0
+
+
+func increment_prevent_count(item_id: String) -> void:
+	"""Increment the prevent counter for a banned item."""
+	_banned_data[item_id] += 1
 
 # ==================== Public API: Lifecycle ====================
 
@@ -67,18 +79,6 @@ func clear() -> void:
 	_banned_data.clear()
 	_bannable_nums.clear()
 	_init_nums()
-
-
-func increment_prevent_count(item_id: String) -> void:
-	"""Increment the prevent counter for a banned item."""
-	_banned_data[item_id] += 1
-
-
-func get_prevent_count(item_id: String) -> int:
-	"""Get the prevent counter for a banned item."""
-	if _banned_data.has(item_id):
-		return _banned_data[item_id]
-	return 0
 
 # ==================== Serialization ====================
 

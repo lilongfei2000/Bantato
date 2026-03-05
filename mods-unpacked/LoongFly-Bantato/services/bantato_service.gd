@@ -241,24 +241,3 @@ func deserialize(data: Array) -> void:
 func _is_valid_player_index(player_index: int) -> bool:
 	"""Check if player_index is within valid bounds."""
 	return player_index >= 0 and player_index < _players.size()
-
-
-func _get_total_item_count(item: ItemParentData) -> int:
-	"""Get total count of items in this tier/type."""
-	var tier_data = ItemService._tiers_data[item.tier]
-
-	if item is ItemData:
-		return tier_data[ItemService.TierData.ITEMS].size()
-	elif item is WeaponData:
-		return tier_data[ItemService.TierData.WEAPONS].size()
-
-	return 1
-
-
-func _get_unbanned_item_count(item: ItemParentData, player_index: int) -> int:
-	"""Get count of unbanned items in this tier/type."""
-	var item_type = ItemService.TierData.ITEMS
-	if item is WeaponData:
-		item_type = ItemService.TierData.WEAPONS
-	
-	return _players[player_index].get_unbanned_count(item.tier, item_type)
