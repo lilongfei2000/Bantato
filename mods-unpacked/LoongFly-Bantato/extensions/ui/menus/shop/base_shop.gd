@@ -15,7 +15,7 @@ func _ready() -> void:
 		player_gear_container.bantato_set_banned_data(banned_data)
 
 		var banned_items_container = player_gear_container.bantato_banned_items_container
-		var _error_connect = banned_items_container._elements.connect("focus_lost", self, "_on_player_focus_lost", [player_index])
+		_error_connect = banned_items_container._elements.connect("focus_lost", self, "_on_player_focus_lost", [player_index])
 		_popup_manager.bantato_connect_inventory_container(banned_items_container)
 	
 	var _error_connect = _popup_manager.connect("bantato_element_focused", self, "_bantato_on_element_focused")
@@ -36,5 +36,5 @@ func bantato_on_shop_item_banned(shop_item: ShopItem, player_index: int) -> void
 	_get_shop_items_container(player_index).reload_shop_items()
 
 
-func _bantato_on_element_focused(element: InventoryElement, player_index: int) -> void:
+func _bantato_on_element_focused(_element: InventoryElement, _player_index: int) -> void:
 	pass

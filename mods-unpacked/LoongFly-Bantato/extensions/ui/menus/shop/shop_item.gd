@@ -125,7 +125,7 @@ func update_color() -> void:
 	_bantato_ban_button.set_color_from_currency(RunData.get_player_gold(player_index))
 
 
-func bantato_update(p_item_data: ItemParentData) -> void:
+func bantato_update(item_data: ItemParentData) -> void:
 	"""Update Bantato ban button visibility and state."""
 	# Check if item is bannable via Bantato
 	if BantatoService.is_bannable(item_data, player_index):

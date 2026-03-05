@@ -19,12 +19,12 @@ func _ready() -> void:
 	# Setup Bantato banned items container
 	bantato_setup_banned_items_container()
 	_bantato_button_on_items_container = bantato_add_button(items_container)
-	_button_on_items_container.text = BANTATO_STR_SWITCH_TO_BANNED
-	_button_on_items_container.connect("pressed", self, "_bantato_switch_container_display")
+	_bantato_button_on_items_container.text = BANTATO_STR_SWITCH_TO_BANNED
+	_bantato_button_on_items_container.connect("pressed", self, "_bantato_switch_container_display")
 
 	_bantato_button_on_banned_container = bantato_add_button(bantato_banned_items_container)
 	_bantato_button_on_banned_container.text = BANTATO_STR_SWITCH_TO_ITEMS
-	_button_on_banned_items_container.connect("pressed", self, "_bantato_switch_container_display")
+	_bantato_button_on_banned_container.connect("pressed", self, "_bantato_switch_container_display")
 
 
 func bantato_setup_banned_items_container() -> void:
