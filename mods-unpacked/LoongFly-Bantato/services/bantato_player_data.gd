@@ -4,7 +4,7 @@ extends Reference
 
 const MOD_NAME = "Bantato"
 const MOD_LOG = "BantatoPlayerData"
-const MIN_UNBANNED_NUM = NB_SHOP_ITEMS * 2
+const MIN_UNBANNED_NUM = ItemService.NB_SHOP_ITEMS * 2
 
 # Banned items for this player with prevent counters
 # Structure: {item_id: int}
@@ -27,7 +27,7 @@ func ban(item: ItemParentData) -> void:
 	_update_bannable_num(item)
 
 
-func unban(item_id: String) -> ItemParentData:
+func unban(_item_id: String):
 	"""Unban an item and add it back to pools. Returns the unbanned item or null."""
 	# TODO: implement this correctly
 	pass
@@ -49,14 +49,14 @@ func get_ban_price(shop_item: ShopItem) -> int:
 	var type = 1 if shop_item.item_data is WeaponData else 0
 	var tier = shop_item.item_data.tier
 	var bannable_num = _bannable_nums[tier][type]
-	return max(1, int(float(shop_item.value) / (bannable_num - 1)))
+	return max(1, float(shop_item.value) / (bannable_num - 1)) as int
 
 
 func get_banned_data() -> Dictionary:
 	return _banned_data
 
 
-func get_unbanned_pool(tier: int, type: int) -> Array:
+func get_unbanned_pool(_tier: int, _type: int):
 	"""Get the pool of unbanned items for a specific tier and type."""
 	pass
 
@@ -78,7 +78,6 @@ func clear() -> void:
 	"""Clear all banned items and reset pools."""
 	_banned_data.clear()
 	_bannable_nums.clear()
-	_init_nums()
 
 # ==================== Serialization ====================
 

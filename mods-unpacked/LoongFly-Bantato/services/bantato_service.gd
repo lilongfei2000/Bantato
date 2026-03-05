@@ -54,7 +54,6 @@ func ban(shop_item: ShopItem, player_index: int) -> void:
 	_players[player_index].ban(shop_item.item_data)
 	# Deduct gold from player
 	RunData.remove_gold(shop_item.bantato_ban_value, player_index)
-	ModLoaderLog.info("Banned item %s for player %d (cost: %d gold)" % [item.my_id, player_index, price], MOD_LOG)
 
 
 func unban(item_id: String, player_index: int) -> void:
@@ -81,9 +80,9 @@ func get_rand_item_retry(pool: Array, player_index: int) -> ItemParentData:
 		# Pick random item
 		elt = Utils.get_rand_element(pool)
 		# Check if banned by Bantato
-		if _players[player_index].is_banned(item):
+		if _players[player_index].is_banned(elt):
 			# Increment prevent counter
-			_players[player_index].increment_prevent_count(item_id)
+			_players[player_index].increment_prevent_count(elt.my_id)
 			continue
 
 		break
@@ -97,10 +96,10 @@ func get_rand_item_remove(pool: Array, player_index: int) -> ItemParentData:
 		# Pick random item
 		elt = Utils.get_rand_element(pool)
 		# Check if banned by Bantato
-		if _players[player_index].is_banned(item):
+		if _players[player_index].is_banned(elt):
 			# Increment prevent counter
-			_players[player_index].increment_prevent_count(item_id)
-			pool = remove_element_by_id_with_item(pool, elt)
+			_players[player_index].increment_prevent_count(elt.my_id)
+			pool = ItemService.remove_element_by_id_with_item(pool, elt)
 			# TODO: check if possible to result in an empty array
 			continue
 
@@ -192,8 +191,8 @@ func reset_run(player_count: int = 1) -> void:
 	_players.clear()
 
 	for i in range(player_count):
-		var player_data = BantatoPlayerData.new(i)
-		_players.append(player_data, _bannable_nums.duplicate())
+		var player_data = BantatoPlayerData.new(i, _bannable_nums.duplicate())
+		_players.append(player_data)
 
 	ModLoaderLog.info("Reset Bantato data for %d player(s)" % player_count, MOD_LOG)
 
