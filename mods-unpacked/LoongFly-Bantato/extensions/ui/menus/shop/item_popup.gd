@@ -11,20 +11,22 @@ func bantato_display_item_data(item_data: ItemParentData, attachment: Control, i
 	_is_inventory_element = is_inventory_element
 	_panel.set_data(item_data, player_index)
 	set_synergies_text(item_data)
+	set_tags_text(item_data)
 
 	_last_wave_info_container.hide()
 	if is_inventory_element and item_data is WeaponData and item_data.dmg_dealt_last_wave != 0:
 		_last_wave_info_container.display(Text.text("DAMAGE_DEALT_LAST_WAVE", [Text.get_formatted_number(item_data.dmg_dealt_last_wave)], [Sign.POSITIVE]))
 	elif is_inventory_element and item_data is ItemData and "item_builder_turret" in item_data.my_id:
-
-		var tracked_id = item_data.my_id
+		
+		
+		var tracked_id: int = item_data.my_id_hash
 
 		
-		if RunData.tracked_item_effects[player_index][item_data.my_id] == 0:
+		if RunData.tracked_item_effects[player_index][item_data.my_id_hash] == 0:
 			var turret_lvl = item_data.my_id.trim_prefix("item_builder_turret_") as int
 
 			if turret_lvl > 0:
-				tracked_id = "item_builder_turret_" + str(turret_lvl - 1)
+				tracked_id = Keys.item_builder_turret_n_hash[turret_lvl - 1]
 
 		_last_wave_info_container.display(Text.text("DAMAGE_DEALT_LAST_WAVE", [Text.get_formatted_number(RunData.tracked_item_effects[player_index][tracked_id])], [Sign.POSITIVE]))
 
