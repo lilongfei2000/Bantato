@@ -23,13 +23,18 @@ func resume_from_state(state: Dictionary) -> void:
 		BantatoService.deserialize(state["bantato_mod_data"])
 
 
+func set_player_count(count: int, reset: = false) -> void :
+	.set_player_count(count, reset)
+	BantatoService.set_player_count(count, reset)
+
+
 # Hook reset() to initialize BantatoService
 func reset(restart: bool = false) -> void:
-	.reset(restart)
-
 	# Initialize BantatoService for the new run
-	var player_count = get_player_count()
 	# Invoked before onready...
 	if not BantatoService:
 		BantatoService = get_node("/root/ModLoader/Longfei-Bantato/BantatoService")
-	BantatoService.reset_run(player_count)
+	
+	.reset(restart)
+
+	BantatoService.reset()

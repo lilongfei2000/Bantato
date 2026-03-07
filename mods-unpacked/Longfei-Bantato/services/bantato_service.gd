@@ -185,7 +185,7 @@ func get_unbanned_pool(tier: int, type: int, player_index: int) -> Array:
 
 # ==================== Public API: Lifecycle ====================
 
-func reset_run(player_count: int = 1) -> void:
+func reset() -> void:
 	"""
 	Reset all data for a new run.
 
@@ -195,16 +195,21 @@ func reset_run(player_count: int = 1) -> void:
 	if _all_items.size() == 0:
 		_init_all_items()
 
-	if _bannable_nums[0] == [0, 0]:
-		_init_nums()
+	_init_nums()
 
-	_players.clear()
+	for player in _players:
+		player.set_bannable_nums(_bannable_nums.duplicate(true))
 
-	for i in range(player_count):
-		var player_data = BantatoPlayerData.new(i, {}, _bannable_nums.duplicate())
-		_players.append(player_data)
+	ModLoaderLog.info("Reset Bantato data for %d player(s)" % _players.size(), MOD_LOG)
 
-	ModLoaderLog.info("Reset Bantato data for %d player(s)" % player_count, MOD_LOG)
+
+func set_player_count(count: int, reset: = false) -> void :
+	if reset:
+		_players.clear()
+	while _players.size() < count:
+		var player_data = BantatoPlayerData.new({}, _bannable_nums.duplicate(true))
+		_players.push_back(player_data)
+	_players.resize(count)
 
 
 # ==================== Serialization ====================
@@ -237,7 +242,7 @@ func deserialize(data: Array) -> void:
 	for player_index in range(data.size()):
 		var banned_data = data[player_index]['banned_data']
 		var bannable_nums = data[player_index]['bannable_nums']
-		var player_data = BantatoPlayerData.new(player_index, banned_data, bannable_nums)
+		var player_data = BantatoPlayerData.new(banned_data, bannable_nums)
 		
 		_players.append(player_data)
 

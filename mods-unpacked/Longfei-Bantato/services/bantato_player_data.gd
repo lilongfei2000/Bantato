@@ -16,10 +16,9 @@ var _unbanned_pools: Array = [] # TODO: check if this pool is necessary
 var _bannable_nums: Array
 
 
-func _init(player_index: int, data: Dictionary = {}, nums: Array = []) -> void:
+func _init(data: Dictionary = {}, nums: Array = []) -> void:
 	_bannable_nums = nums
 	_banned_data = data
-	ModLoaderLog.info("Player %d data initialized" % player_index, MOD_LOG)
 
 # ==================== Public API: Banning ====================
 
@@ -88,6 +87,10 @@ func clear() -> void:
 	"""Clear all banned items and reset pools."""
 	_banned_data.clear()
 	_bannable_nums.clear()
+
+
+func set_bannable_nums(nums: Array) -> void:
+	_bannable_nums = nums
 
 # ==================== Serialization ====================
 
