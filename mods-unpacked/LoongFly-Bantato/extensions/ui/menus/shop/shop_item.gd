@@ -30,9 +30,11 @@ func _bantato_create_ban_button() -> ButtonWithIcon:
 	var icon = button.get_node("HBoxContainer/GoldIcon")
 	icon.set_texture(load("res://mods-unpacked/LoongFly-Bantato/extensions/ui/menus/shop/bantato_ban_icon.png"))
 	button.get_node("HBoxContainer/Label").set("custom_fonts/font", _button.get_node("HBoxContainer/Label").get("custom_fonts/font"))
-	button.get_node("HBoxContainer/GoldIcon").rect_size = _button.get_node("HBoxContainer/GoldIcon").rect_size
-	button.get_node("HBoxContainer/GoldIcon").rect_min_size = _button.get_node("HBoxContainer/GoldIcon").rect_min_size
-	button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	#button.get_node("HBoxContainer/GoldIcon").rect_size = _button.get_node("HBoxContainer/GoldIcon").rect_size
+	#button.get_node("HBoxContainer/GoldIcon").rect_min_size = _button.get_node("HBoxContainer/GoldIcon").rect_min_size
+	button.get_node("HBoxContainer/GoldIcon").rect_size = Vector2(45, 45)
+	button.get_node("HBoxContainer/GoldIcon").rect_min_size = Vector2(45, 45)
+	#button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	button.size_flags_horizontal = 0
 
 	# Connect to Bantato ban handler
@@ -68,17 +70,17 @@ func _bantato_setup_for_single() -> void:
 func bantato_adjust_size() -> void:
 	"""Adjust item card size to fit Bantato button."""
 	var panel_container = $"PanelContainer"
-	panel_container.set_margin(MARGIN_TOP, 120)  # Increased from 75
+	panel_container.set_margin(MARGIN_TOP, 75)  # Increased from 75
 	panel_container.set_custom_minimum_size(Vector2(0, 0))
-	panel_container.set_size(Vector2(417, 445))  # Increased height from 400
+	panel_container.set_size(Vector2(417, 400))  # Increased height from 400
 
 	var margin_container = $"PanelContainer" / "MarginContainer"
 	margin_container.set_custom_minimum_size(Vector2(0, 0))
-	margin_container.set_size(Vector2(407, 435))
+	margin_container.set_size(Vector2(407, 390))
 
 	var vbox = $"PanelContainer" / "MarginContainer" / "VBoxContainer"
 	vbox.set_custom_minimum_size(Vector2(0, 0))
-	vbox.set_size(Vector2(387, 415))
+	vbox.set_size(Vector2(387, 370))
 
 	var empty_space = $"PanelContainer" / "MarginContainer" / "VBoxContainer" / "EmptySpace"
 	empty_space.set_custom_minimum_size(Vector2(0, 0))
@@ -137,7 +139,8 @@ func bantato_update(item_data: ItemParentData) -> void:
 		_bantato_ban_button.activate()
 	else:
 		# Hide and disable
-		_bantato_ban_button.hide()
+		# _bantato_ban_button.hide()
+		_bantato_ban_button.set_text('MAX')
 		_bantato_ban_button.disable()
 
 
