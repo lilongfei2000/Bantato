@@ -21,6 +21,9 @@ func _ready() -> void:
 	_bantato_button_on_items_container = bantato_add_button(items_container)
 	_bantato_button_on_items_container.text = BANTATO_STR_SWITCH_TO_BANNED
 	_bantato_button_on_items_container.connect("pressed", self, "_bantato_switch_container_display")
+	var sort_button = items_container.get_node("HBoxContainer/Sort_Inventory_button")
+	_bantato_button_on_items_container.focus_neighbour_right = sort_button.get_path()
+	sort_button.focus_neighbour_left = _bantato_button_on_items_container.get_path()
 
 	_bantato_button_on_banned_container = bantato_add_button(bantato_banned_items_container)
 	_bantato_button_on_banned_container.text = BANTATO_STR_SWITCH_TO_ITEMS
@@ -55,16 +58,10 @@ func bantato_add_button(container: InventoryContainer) -> Node:
 	else:
 		toggle_button.add_font_override("font", preload("res://resources/fonts/actual/base/font_26.tres"))
 	toggle_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	container.remove_child(container._label)
-	# Create HBoxContainer to hold Label and Button
-	var hbox = HBoxContainer.new()
+	var hbox = container._label.get_parent()
 	# Add spacer for flexible layout
 	hbox.add_child(toggle_button)
-	hbox.add_child(container._label)
-	container._label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	hbox.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	container.add_child(hbox)
-	container.move_child(hbox, 0)
+	hbox.move_child(toggle_button, 0)
 
 	return toggle_button
 
