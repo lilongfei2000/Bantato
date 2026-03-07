@@ -10,10 +10,12 @@ const NUM_TIER = 4
 
 const BantatoPlayerData = preload("res://mods-unpacked/LoongFly-Bantato/services/bantato_player_data.gd")
 
+signal banned_item_prevent(item, player_index)
+
 # Player data objects: [BantatoPlayerData, ...] indexed by player_index
 var _players: Array = []
 var _all_items: Dictionary = {}
-var _bannable_nums: Array = []
+var _bannable_nums: Array = [[0, 0], [0, 0], [0, 0], [0, 0]]
 
 
 func _init() -> void:
@@ -29,7 +31,8 @@ func _init_all_items() -> void:
 
 func _init_nums() -> void:
 	for tier in NUM_TIER:
-		var item_pool = ItemService.get_pool(tier, ItemService.TierData.ITEMS)
+		var type = ItemService.TierData.ITEMS
+		var item_pool = ItemService.get_pool(tier, type)
 		var item_bannable_num = 0
 		for item in item_pool:
 			if item.max_nb == -1:
@@ -37,7 +40,7 @@ func _init_nums() -> void:
 		
 		var weapon_pool = ItemService.get_pool(tier, ItemService.TierData.WEAPONS)
 
-		_bannable_nums.append([item_bannable_num, weapon_pool.size()])
+		_bannable_nums[tier] = [item_bannable_num, weapon_pool.size()]
 
 
 # ==================== Public API: Banning ====================
@@ -56,7 +59,11 @@ func ban(shop_item: ShopItem, player_index: int) -> void:
 	RunData.remove_gold(shop_item.bantato_ban_value, player_index)
 
 
-func unban(item_id: String, player_index: int) -> void:
+func update_ban_num(item: ItemParentData, player_index: int) -> void:
+	_players[player_index].update_bannable_num(item)
+
+
+func unban(_item_id: String, _player_index: int) -> void:
 	"""
 	Unban an item for a player.
 
@@ -64,7 +71,7 @@ func unban(item_id: String, player_index: int) -> void:
 		item_id: The ID of the item to unban
 		player_index: The player's index (0-3)
 	"""
-	var item = _players[player_index].unban(item_id)
+	pass
 
 
 # ==================== Public API: Queries ====================
@@ -73,9 +80,9 @@ func get_banned_data(player_index: int) -> Dictionary:
 	return _players[player_index].get_banned_data()
 
 
+# Possible to be a dead loop because of the native item selection rule
 func get_rand_item_retry(pool: Array, player_index: int) -> ItemParentData:
 	var elt
-	# TODO: check if possible to loop forever
 	while true:
 		# Pick random item
 		elt = Utils.get_rand_element(pool)
@@ -90,17 +97,20 @@ func get_rand_item_retry(pool: Array, player_index: int) -> ItemParentData:
 	return elt
 
 
-func get_rand_item_remove(pool: Array, player_index: int) -> ItemParentData:
+func get_rand_item_remove(pool: Array, backup_pool: Array, player_index: int) -> ItemParentData:
 	var elt
+	var current_pool = pool
 	while true:
 		# Pick random item
-		elt = Utils.get_rand_element(pool)
+		if current_pool.size() == 0:
+			current_pool = backup_pool
+		elt = Utils.get_rand_element(current_pool)
 		# Check if banned by Bantato
 		if _players[player_index].is_banned(elt):
 			# Increment prevent counter
 			_players[player_index].increment_prevent_count(elt.my_id)
-			pool = ItemService.remove_element_by_id_with_item(pool, elt)
-			# TODO: check if possible to result in an empty array
+			current_pool = ItemService.remove_element_by_id_with_item(current_pool, elt)
+			emit_signal("banned_item_prevent", elt, player_index)
 			continue
 
 		break
@@ -185,7 +195,7 @@ func reset_run(player_count: int = 1) -> void:
 	if _all_items.size() == 0:
 		_init_all_items()
 
-	if _bannable_nums.size() == 0:
+	if _bannable_nums[0] == [0, 0]:
 		_init_nums()
 
 	_players.clear()

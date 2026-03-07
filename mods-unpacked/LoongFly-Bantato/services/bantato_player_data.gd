@@ -4,11 +4,12 @@ extends Reference
 
 const MOD_NAME = "Bantato"
 const MOD_LOG = "BantatoPlayerData"
-const MIN_UNBANNED_NUM = ItemService.NB_SHOP_ITEMS * 2
+const NB_SHOP_ITEMS = 4
+const MIN_UNBANNED_NUM = NB_SHOP_ITEMS * 2
 
 # Banned items for this player with prevent counters
 # Structure: {item_id: int}
-var _banned_data: Dictionary
+var _banned_data: Dictionary = {}
 
 # Unbanned item pools: [tier][type]{ItemParentData.my_id: true}
 var _unbanned_pools: Array = [] # TODO: check if this pool is necessary
@@ -24,8 +25,16 @@ func _init(player_index: int, data: Dictionary = {}, nums: Array = []) -> void:
 
 func ban(item: ItemParentData) -> void:
 	"""Ban an item and remove it from pools."""
-	_banned_data[item.my_id] = 0
-	_update_bannable_num(item)
+	_banned_data[item.my_id] = 1
+	update_bannable_num(item)
+
+
+func update_bannable_num(item: ItemParentData) -> void:
+	if item is ItemData:
+		if item.max_nb == -1:
+			_bannable_nums[item.tier][0] -= 1
+	elif item is WeaponData:
+		_bannable_nums[item.tier][1] -= 1
 
 
 func unban(_item_id: String):
@@ -87,12 +96,3 @@ func serialize() -> Dictionary:
 		'banned_data': _banned_data,
 		'bannable_nums': _bannable_nums
 	}
-
-# ==================== Private Helpers ====================
-
-func _update_bannable_num(item: ItemParentData) -> void:
-	if item is ItemData:
-		if item.max_nb == -1:
-			_bannable_nums[item.tier][0] -= 1
-	elif item is WeaponData:
-		_bannable_nums[item.tier][1] -= 1

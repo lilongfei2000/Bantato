@@ -19,8 +19,17 @@ func _ready() -> void:
 		_popup_manager.bantato_connect_inventory_container(banned_items_container)
 	
 	var _error_connect = _popup_manager.connect("bantato_element_focused", self, "_bantato_on_element_focused")
+	_error_connect = BantatoService.connect("banned_item_prevent", self, "bantato_banned_item_prevent")
 
 
+# --- Overwrites ---
+func on_shop_item_banned(shop_item: ShopItem, player_index: int) -> void :
+	.on_shop_item_banned(shop_item, player_index)
+	BantatoService.update_ban_num(shop_item.item_data)
+	_get_shop_items_container(player_index).reload_shop_items()
+
+
+# --- Adds ---
 func bantato_on_shop_item_banned(shop_item: ShopItem, player_index: int) -> void:
 	"""Handle when an item is banned via Bantato."""
 	# Remove the item from current shop items
@@ -34,6 +43,10 @@ func bantato_on_shop_item_banned(shop_item: ShopItem, player_index: int) -> void
 
 	# Reload the shop items container
 	_get_shop_items_container(player_index).reload_shop_items()
+
+
+func bantato_banned_item_prevent(item: ItemParentData, player_index: int) -> void:
+	_get_gear_container(player_index).bantato_add_to_banned_container(item)
 
 
 func _bantato_on_element_focused(_element: InventoryElement, _player_index: int) -> void:

@@ -6,12 +6,13 @@ onready var BantatoService = get_node("/root/ModLoader/LoongFly-Bantato/BantatoS
 # Hook _get_rand_item_for_wave to filter out Bantato-banned items
 func _get_rand_item_for_wave(wave: int, player_index: int, type: int, args: GetRandItemForWaveArgs) -> ItemParentData:
 	var pools = bantato_get_rand_item_pool(wave, player_index, type, args)
-	var pool = pools[0] if pools[0].size() > 0 else pools[1]
+	var pool = pools[0]
+	var backup_pool = pools[1]
 	
-	var elt = BantatoService.get_rand_item_retry(pool, player_index)
+	var elt = BantatoService.get_rand_item_remove(pool, backup_pool, player_index)
 
 	while elt.my_id_hash == Keys.item_axolotl_hash and randf() < 0.5:
-		elt = BantatoService.get_rand_item_retry(pool, player_index)
+		elt = BantatoService.get_rand_item_remove(pool, backup_pool, player_index)
 
 	if DebugService.force_item_in_shop != "" and randf() < 0.5:
 		elt = get_element(items, Keys.generate_hash(DebugService.force_item_in_shop))
