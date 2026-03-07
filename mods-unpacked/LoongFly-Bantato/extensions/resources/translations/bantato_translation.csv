@@ -1,4 +1,4 @@
 keys,en,zh,zh_TW
-BANTATO_BANNED_ITEMS,Bantato Banned,Bantato禁用物品,Bantato已禁用物品
-BANTATO_SWITCH_TO_BANNED,Show Bantato Banned,显示Bantato禁用列表,顯示Bantato禁用列表
-BANTATO_SWITCH_TO_ITEMS,Show Bought,显示道具列表,顯示道具列表
+BANTATO_BANNED,Bantato Blocks,Bantato拦截次数,Bantato攔截次數
+BANTATO_SWITCH_TO_BANNED,Show Bantato,显示Bantato,顯示Bantato
+BANTATO_SWITCH_TO_ITEMS,Show Bought,显示道具,顯示道具
