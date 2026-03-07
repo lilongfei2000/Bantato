@@ -1,7 +1,8 @@
 extends "res://singletons/run_data.gd"
 
 # Access BantatoService
-onready var BantatoService = get_node("/root/ModLoader/LoongFly-Bantato/BantatoService")
+# onready var BantatoService = get_node("/root/ModLoader/LoongFly-Bantato/BantatoService")
+var BantatoService
 
 # Override get_state to include Bantato data
 func get_state() -> Dictionary:
@@ -28,4 +29,7 @@ func reset(restart: bool = false) -> void:
 
 	# Initialize BantatoService for the new run
 	var player_count = get_player_count()
+	# Invoked before onready...
+	if not BantatoService:
+		BantatoService = get_node("/root/ModLoader/LoongFly-Bantato/BantatoService")
 	BantatoService.reset_run(player_count)
