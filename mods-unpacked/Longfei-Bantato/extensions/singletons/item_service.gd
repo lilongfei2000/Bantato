@@ -1,7 +1,7 @@
 extends "res://singletons/item_service.gd"
 
 # Access BantatoService
-onready var BantatoService = get_node("/root/ModLoader/LoongFly-Bantato/BantatoService")
+onready var BantatoService = get_node("/root/ModLoader/Longfei-Bantato/BantatoService")
 
 # Hook _get_rand_item_for_wave to filter out Bantato-banned items
 func _get_rand_item_for_wave(wave: int, player_index: int, type: int, args: GetRandItemForWaveArgs) -> ItemParentData:

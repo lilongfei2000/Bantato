@@ -1,8 +1,8 @@
 extends Node
 
 
-const LOONGFLY_BANTATO_DIR := "LoongFly-Bantato"
-const LOONGFLY_BANTATO_LOG := "LoongFly-Bantato:Main"
+const LONGFEI_BANTATO_DIR := "Longfei-Bantato"
+const LONGFEI_BANTATO_LOG := "Longfei-Bantato:Main"
 
 var mod_dir_path := ""
 var extensions_dir_path := ""
@@ -12,23 +12,20 @@ var _bantato_service: Node = null
 # Before v6.1.0
 # func _init(modLoader = ModLoader) -> void:
 func _init() -> void:
-	mod_dir_path = ModLoaderMod.get_unpacked_dir().plus_file(LOONGFLY_BANTATO_DIR)
-
-	# Create and add BantatoService as child node
+	mod_dir_path = ModLoaderMod.get_unpacked_dir().plus_file(LONGFEI_BANTATO_DIR)
 	_add_bantato_service()
-
 	# Add extensions
 	install_script_extensions()
 	# Add translations
 	add_translations()
-
+	
 
 func _add_bantato_service() -> void:
 	"""Create and add BantatoService as a child node."""
 	var service_script = load(mod_dir_path.plus_file("services/bantato_service.gd"))
 
 	if service_script == null:
-		ModLoaderLog.error("Failed to load BantatoService script", LOONGFLY_BANTATO_LOG)
+		ModLoaderLog.error("Failed to load BantatoService script", LONGFEI_BANTATO_LOG)
 		return
 
 	_bantato_service = service_script.new()
@@ -37,7 +34,7 @@ func _add_bantato_service() -> void:
 	# Add as child to main (makes it globally accessible via get_node)
 	add_child(_bantato_service)
 
-	ModLoaderLog.info("BantatoService added as child node", LOONGFLY_BANTATO_LOG)
+	ModLoaderLog.info("BantatoService added as child node", LONGFEI_BANTATO_LOG)
 
 
 func install_script_extensions() -> void:
@@ -68,9 +65,9 @@ func install_script_extensions() -> void:
 func add_translations() -> void:
 	translations_dir_path = mod_dir_path.plus_file("extensions/resources/translations")
 	ModLoaderMod.add_translation(translations_dir_path.plus_file("bantato_translation.en.translation"))
-	ModLoaderMod.add_translation(translations_dir_path.plus_file("bantato_translation.zh_Hans_CN.translation"))
-	ModLoaderMod.add_translation(translations_dir_path.plus_file("bantato_translation.zh_Hant_TW.translation"))
+	ModLoaderMod.add_translation(translations_dir_path.plus_file("bantato_translation.zh.translation"))
+	ModLoaderMod.add_translation(translations_dir_path.plus_file("bantato_translation.zh_TW.translation"))
 
 
 func _ready() -> void:
-	ModLoaderLog.info("Ready!", LOONGFLY_BANTATO_LOG)
+	ModLoaderLog.info("Ready!", LONGFEI_BANTATO_LOG)

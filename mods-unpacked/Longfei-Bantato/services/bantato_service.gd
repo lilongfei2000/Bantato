@@ -8,7 +8,7 @@ const MOD_NAME = "Bantato"
 const MOD_LOG = "BantatoService"
 const NUM_TIER = 4
 
-const BantatoPlayerData = preload("res://mods-unpacked/LoongFly-Bantato/services/bantato_player_data.gd")
+const BantatoPlayerData = preload("res://mods-unpacked/Longfei-Bantato/services/bantato_player_data.gd")
 
 signal banned_item_prevent(item, player_index)
 

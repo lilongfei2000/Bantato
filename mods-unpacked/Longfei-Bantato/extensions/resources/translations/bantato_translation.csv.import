@@ -1,0 +1,16 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+
+[deps]
+
+files=[ "res://mods-unpacked/Longfei-Bantato/extensions/resources/translations/bantato_translation.en.translation", "res://mods-unpacked/Longfei-Bantato/extensions/resources/translations/bantato_translation.zh.translation", "res://mods-unpacked/Longfei-Bantato/extensions/resources/translations/bantato_translation.zh_TW.translation" ]
+
+source_file="res://mods-unpacked/Longfei-Bantato/extensions/resources/translations/bantato_translation.csv"
+dest_files=[ "res://mods-unpacked/Longfei-Bantato/extensions/resources/translations/bantato_translation.en.translation", "res://mods-unpacked/Longfei-Bantato/extensions/resources/translations/bantato_translation.zh.translation", "res://mods-unpacked/Longfei-Bantato/extensions/resources/translations/bantato_translation.zh_TW.translation" ]
+
+[params]
+
+compress=true
+delimiter=0

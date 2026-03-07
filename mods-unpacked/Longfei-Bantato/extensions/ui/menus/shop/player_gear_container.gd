@@ -1,10 +1,10 @@
 extends "res://ui/menus/shop/player_gear_container.gd"
 
 # Access BantatoService
-onready var BantatoService = get_node("/root/ModLoader/LoongFly-Bantato/BantatoService")
+onready var BantatoService = get_node("/root/ModLoader/Longfei-Bantato/BantatoService")
 
 # Translation keys for UI strings
-const BANTATO_STR_BANNED_ITEMS = "BANTATO_BANNED_ITEMS"
+const BANTATO_STR_BANNED_ITEMS = "BANTATO_BANNED"
 const BANTATO_STR_SWITCH_TO_BANNED = "BANTATO_SWITCH_TO_BANNED"
 const BANTATO_STR_SWITCH_TO_ITEMS = "BANTATO_SWITCH_TO_ITEMS"
 

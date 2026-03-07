@@ -1,7 +1,7 @@
 extends "res://ui/menus/shop/base_shop.gd"
 
 # Access BantatoService
-onready var BantatoService = get_node("/root/ModLoader/LoongFly-Bantato/BantatoService")
+onready var BantatoService = get_node("/root/ModLoader/Longfei-Bantato/BantatoService")
 
 func _ready() -> void:
 	# Connect to Bantato ban events for each player

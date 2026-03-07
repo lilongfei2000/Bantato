@@ -1,7 +1,7 @@
 extends "res://ui/menus/shop/shop_item.gd"
 
 # Access BantatoService
-onready var BantatoService = get_node("/root/ModLoader/LoongFly-Bantato/BantatoService")
+onready var BantatoService = get_node("/root/ModLoader/Longfei-Bantato/BantatoService")
 
 var _bantato_ban_button: ButtonWithIcon
 var bantato_ban_value: int
@@ -28,7 +28,7 @@ func _bantato_create_ban_button() -> ButtonWithIcon:
 	# Setup button properties
 	button.text = ""
 	var icon = button.get_node("HBoxContainer/GoldIcon")
-	icon.set_texture(load("res://mods-unpacked/LoongFly-Bantato/extensions/ui/menus/shop/bantato_ban_icon.png"))
+	icon.set_texture(load("res://mods-unpacked/Longfei-Bantato/extensions/ui/menus/shop/bantato_ban_icon.png"))
 	button.get_node("HBoxContainer/Label").set("custom_fonts/font", _button.get_node("HBoxContainer/Label").get("custom_fonts/font"))
 	#button.get_node("HBoxContainer/GoldIcon").rect_size = _button.get_node("HBoxContainer/GoldIcon").rect_size
 	#button.get_node("HBoxContainer/GoldIcon").rect_min_size = _button.get_node("HBoxContainer/GoldIcon").rect_min_size

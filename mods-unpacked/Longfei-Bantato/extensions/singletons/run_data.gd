@@ -1,7 +1,7 @@
 extends "res://singletons/run_data.gd"
 
 # Access BantatoService
-# onready var BantatoService = get_node("/root/ModLoader/LoongFly-Bantato/BantatoService")
+# onready var BantatoService = get_node("/root/ModLoader/Longfei-Bantato/BantatoService")
 var BantatoService
 
 # Override get_state to include Bantato data
@@ -9,7 +9,7 @@ func get_state() -> Dictionary:
 	var state = .get_state()
 
 	# Add Bantato data to save state with unique key
-	state["loongfly_bantato_mod_data"] = BantatoService.serialize()
+	state["bantato_mod_data"] = BantatoService.serialize()
 
 	return state
 
@@ -19,8 +19,8 @@ func resume_from_state(state: Dictionary) -> void:
 	.resume_from_state(state)
 
 	# Restore Bantato data if present
-	if state.has("loongfly_bantato_mod_data"):
-		BantatoService.deserialize(state["loongfly_bantato_mod_data"])
+	if state.has("bantato_mod_data"):
+		BantatoService.deserialize(state["bantato_mod_data"])
 
 
 # Hook reset() to initialize BantatoService
@@ -31,5 +31,5 @@ func reset(restart: bool = false) -> void:
 	var player_count = get_player_count()
 	# Invoked before onready...
 	if not BantatoService:
-		BantatoService = get_node("/root/ModLoader/LoongFly-Bantato/BantatoService")
+		BantatoService = get_node("/root/ModLoader/Longfei-Bantato/BantatoService")
 	BantatoService.reset_run(player_count)

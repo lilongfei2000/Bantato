@@ -2,7 +2,7 @@ extends "res://ui/menus/shop/shop_items_container.gd"
 
 signal bantato_shop_item_banned(shop_item, player_index)
 
-onready var BantatoService = get_node("/root/ModLoader/LoongFly-Bantato/BantatoService")
+onready var BantatoService = get_node("/root/ModLoader/Longfei-Bantato/BantatoService")
 
 
 func connect_shop_items() -> void:
