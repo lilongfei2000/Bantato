@@ -1,6 +1,6 @@
 extends "res://ui/menus/shop/shop_items_container.gd"
 
-signal bantato_shop_item_banned(shop_item)
+signal bantato_shop_item_banned(shop_item, player_index)
 
 onready var BantatoService = get_node("/root/ModLoader/LoongFly-Bantato/BantatoService")
 
@@ -24,7 +24,7 @@ func bantato_on_ban_button_pressed(shop_item: ShopItem) -> void:
 
 	BantatoService.ban(shop_item, player_index)
 
-	emit_signal("bantato_shop_item_banned", shop_item)
+	emit_signal("bantato_shop_item_banned", shop_item, player_index)
 
 	# Deactivate the item in the shop
 	for item in _shop_items:
