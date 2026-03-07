@@ -5,12 +5,12 @@ signal bantato_element_focused(element, player_index)
 
 
 func bantato_connect_inventory_container(container: InventoryContainer) -> void :
-    var inventory = container._elements
-    var _err = inventory.connect("element_hovered", self, "_bantato_on_element_hovered")
-    _err = inventory.connect("element_unhovered", self, "_on_element_unhovered")
-    _err = inventory.connect("element_focused", self, "_bantato_on_element_focused")
-    _err = inventory.connect("element_unfocused", self, "_on_element_unfocused")
-    _err = inventory.connect("element_pressed", self, "_bantato_on_element_pressed")
+	var inventory = container._elements
+	var _err = inventory.connect("element_hovered", self, "_bantato_on_element_hovered")
+	_err = inventory.connect("element_unhovered", self, "_on_element_unhovered")
+	_err = inventory.connect("element_focused", self, "_bantato_on_element_focused")
+	_err = inventory.connect("element_unfocused", self, "_on_element_unfocused")
+	_err = inventory.connect("element_pressed", self, "_bantato_on_element_pressed")
 
 
 func _bantato_on_element_hovered(element: InventoryElement) -> void :
@@ -25,15 +25,15 @@ func _bantato_on_element_hovered(element: InventoryElement) -> void :
 
 
 func _bantato_on_element_focused(element: InventoryElement) -> void :
-    var player_index = _get_player_index_for_control(element)
-    emit_signal("bantato_element_focused", element, player_index)
-    if _elements_pressed[player_index] != null:
-        return
-    _elements_focused[player_index] = element
-    if _item_popups[player_index]:
-        _item_popups[player_index].bantato_display_element(element)
+	var player_index = _get_player_index_for_control(element)
+	emit_signal("bantato_element_focused", element, player_index)
+	if _elements_pressed[player_index] != null:
+		return
+	_elements_focused[player_index] = element
+	if _item_popups[player_index]:
+		_item_popups[player_index].bantato_display_element(element)
 
 
 func _bantato_on_element_pressed(element: InventoryElement) -> void :
-    var player_index = _get_player_index_for_control(element)
-    emit_signal("element_pressed", element, player_index, false)
+	var player_index = _get_player_index_for_control(element)
+	emit_signal("element_pressed", element, player_index, false)
