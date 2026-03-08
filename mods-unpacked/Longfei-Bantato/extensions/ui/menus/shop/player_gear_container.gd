@@ -32,19 +32,8 @@ func _ready() -> void:
 
 func bantato_setup_banned_items_container() -> void:
 	"""Create a separate container for Bantato-banned items."""
-	if RunData.is_coop_run:
-		bantato_banned_items_container = load("res://ui/menus/shop/coop_inventory_container.tscn").instance()
-		items_container.add_constant_override("separation", 10)
-		bantato_banned_items_container.add_constant_override("separation", 10)
-		weapons_container.add_constant_override("separation", 10)
-		bantato_banned_items_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	else:
-		bantato_banned_items_container = load("res://ui/menus/shop/inventory_container.tscn").instance()
-
+	bantato_banned_items_container = items_container.duplicate()
 	bantato_banned_items_container.visible = false
-	bantato_banned_items_container.reserve_column_count = items_container.reserve_column_count
-	bantato_banned_items_container.reserve_row_count = items_container.reserve_row_count
-	bantato_banned_items_container.rect_size = items_container.rect_size
 
 	add_child(bantato_banned_items_container)
 	move_child(bantato_banned_items_container, items_container.get_index())
@@ -54,10 +43,11 @@ func bantato_add_button(container: InventoryContainer) -> Node:
 	"""Add a toggle button to a container."""
 	var toggle_button = MyMenuButton.new()
 	if RunData.is_coop_run:
-		toggle_button.add_font_override("font", preload("res://resources/fonts/actual/base/font_26.tres"))
+		toggle_button.add_font_override("font", preload("res://resources/fonts/actual/base/font_22.tres"))
 	else:
 		toggle_button.add_font_override("font", preload("res://resources/fonts/actual/base/font_26.tres"))
 	toggle_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	container._label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var hbox = container._label.get_parent()
 	# Add spacer for flexible layout
 	hbox.add_child(toggle_button)
