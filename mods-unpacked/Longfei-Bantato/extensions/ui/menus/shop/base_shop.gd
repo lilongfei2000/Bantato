@@ -43,6 +43,9 @@ func bantato_on_shop_item_banned(shop_item: ShopItem, player_index: int) -> void
 
 	# Reload the shop items container
 	_get_shop_items_container(player_index).reload_shop_items()
+	# Consistent with buying item
+	_has_bonus_free_reroll[player_index] = _shop_items[player_index].empty()
+	set_reroll_button_price(player_index)
 
 
 func bantato_banned_item_prevent(item: ItemParentData, player_index: int) -> void:
