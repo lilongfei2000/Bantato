@@ -61,6 +61,8 @@ func install_script_extensions() -> void:
 	ModLoaderMod.install_script_extension(extensions_dir_path.plus_file("ui/menus/shop/coop_shop_player_container.gd"))
 	ModLoaderMod.install_script_extension(extensions_dir_path.plus_file("ui/menus/global/popup_manager.gd"))
 
+	ModLoaderMod.install_script_extension(extensions_dir_path.plus_file("singletons/debug_service.gd"))
+
 
 func add_translations() -> void:
 	translations_dir_path = mod_dir_path.plus_file("extensions/resources/translations")
