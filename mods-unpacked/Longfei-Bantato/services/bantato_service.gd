@@ -81,15 +81,22 @@ func get_banned_data(player_index: int) -> Dictionary:
 
 
 # Possible to be a dead loop because of the native item selection rule
-func get_rand_item_retry(pool: Array, player_index: int) -> ItemParentData:
+func get_rand_item_retry(pool: Array, backup_pool: Array, player_index: int) -> ItemParentData:
 	var elt
+	var current_pool = backup_pool
+	for e in pool:
+		if not _players[player_index].is_banned(e):
+			current_pool = pool
+			break
 	while true:
 		# Pick random item
-		elt = Utils.get_rand_element(pool)
+		elt = Utils.get_rand_element(current_pool)
 		# Check if banned by Bantato
 		if _players[player_index].is_banned(elt):
 			# Increment prevent counter
 			_players[player_index].increment_prevent_count(elt.my_id)
+			emit_signal("banned_item_prevent", elt, player_index)
+			
 			continue
 
 		break
@@ -109,8 +116,10 @@ func get_rand_item_remove(pool: Array, backup_pool: Array, player_index: int) ->
 		if _players[player_index].is_banned(elt):
 			# Increment prevent counter
 			_players[player_index].increment_prevent_count(elt.my_id)
-			current_pool = ItemService.remove_element_by_id_with_item(current_pool, elt)
 			emit_signal("banned_item_prevent", elt, player_index)
+
+			current_pool = ItemService.remove_element_by_id_with_item(current_pool, elt)
+			
 			continue
 
 		break
