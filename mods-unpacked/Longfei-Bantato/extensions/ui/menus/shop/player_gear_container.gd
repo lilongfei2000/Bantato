@@ -2,69 +2,18 @@ extends "res://ui/menus/shop/player_gear_container.gd"
 
 # Access BantatoService
 onready var BantatoService = get_node("/root/ModLoader/Longfei-Bantato/BantatoService")
+onready var bantato_banned_items_container: InventoryContainer = BantatoService.setup_banned_items_container(items_container)
 
-# Translation keys for UI strings
-const BANTATO_STR_BANNED_ITEMS = "BANTATO_BANNED"
-const BANTATO_STR_SWITCH_TO_BANNED = "BANTATO_SWITCH_TO_BANNED"
-const BANTATO_STR_SWITCH_TO_ITEMS = "BANTATO_SWITCH_TO_ITEMS"
-
-var bantato_banned_items_container: InventoryContainer
-var _bantato_button_on_banned_container
-var _bantato_button_on_items_container
-
-onready var _bantato_item_index: Dictionary = {}
-
-
-func _ready() -> void:
-	# Setup Bantato banned items container
-	bantato_setup_banned_items_container()
-	_bantato_button_on_items_container = bantato_add_button(items_container)
-	_bantato_button_on_items_container.text = BANTATO_STR_SWITCH_TO_BANNED
-	_bantato_button_on_items_container.connect("pressed", self, "_bantato_switch_container_display")
-	var sort_button = items_container.get_node("HBoxContainer/Sort_Inventory_button")
-	_bantato_button_on_items_container.focus_neighbour_right = sort_button.get_path()
-	sort_button.focus_neighbour_left = _bantato_button_on_items_container.get_path()
-
-	_bantato_button_on_banned_container = bantato_add_button(bantato_banned_items_container)
-	_bantato_button_on_banned_container.text = BANTATO_STR_SWITCH_TO_ITEMS
-	_bantato_button_on_banned_container.connect("pressed", self, "_bantato_switch_container_display")
-
-
-func bantato_setup_banned_items_container() -> void:
-	"""Create a separate container for Bantato-banned items."""
-	bantato_banned_items_container = items_container.duplicate()
-	bantato_banned_items_container.visible = false
-
-	add_child(bantato_banned_items_container)
-	move_child(bantato_banned_items_container, items_container.get_index())
-	
-
-func bantato_add_button(container: InventoryContainer) -> Node:
-	"""Add a toggle button to a container."""
-	var toggle_button = MyMenuButton.new()
-	if RunData.is_coop_run:
-		toggle_button.add_font_override("font", preload("res://resources/fonts/actual/base/font_22.tres"))
-	else:
-		toggle_button.add_font_override("font", preload("res://resources/fonts/actual/base/font_26.tres"))
-	toggle_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	container._label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var hbox = container._label.get_parent()
-	# Add spacer for flexible layout
-	hbox.add_child(toggle_button)
-	hbox.move_child(toggle_button, 0)
-
-	return toggle_button
+var _bantato_item_index: Dictionary
 
 
 func bantato_set_banned_data(banned_data: Dictionary) -> void:
 	"""Set the Bantato-banned items data."""
+	BantatoService.set_banned_data(bantato_banned_items_container, banned_data)
+
 	_bantato_item_index = {}
-	bantato_banned_items_container._label.text = BANTATO_STR_BANNED_ITEMS
 	for id in banned_data.keys():
-		var item = BantatoService.get_item_by_id(id)
-		var prevent_count = banned_data[id]
 		_bantato_item_index[id] = _bantato_item_index.size()
-		bantato_banned_items_container._elements.add_element_with_count(item, prevent_count, false, 0.5)
 
 
 func bantato_add_to_banned_container(item: ItemParentData) -> void:
@@ -78,15 +27,3 @@ func bantato_add_to_banned_container(item: ItemParentData) -> void:
 		if item.is_cursed:
 			item = BantatoService.get_item_by_id(item.my_id)
 		bantato_banned_items_container._elements.add_element(item, false, false)
-
-
-func _bantato_switch_container_display() -> void:
-	"""Toggle visibility of Bantato banned items container."""
-	if items_container.visible:
-		items_container.visible = false
-		bantato_banned_items_container.visible = true
-		_bantato_button_on_banned_container.grab_focus()
-	else:
-		bantato_banned_items_container.visible = false
-		items_container.visible = true
-		_bantato_button_on_items_container.grab_focus()

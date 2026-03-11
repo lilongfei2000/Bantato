@@ -59,6 +59,10 @@ func install_script_extensions() -> void:
 	ModLoaderMod.install_script_extension(extensions_dir_path.plus_file("ui/menus/shop/shop.gd"))
 	ModLoaderMod.install_script_extension(extensions_dir_path.plus_file("ui/menus/shop/coop_shop.gd"))
 	ModLoaderMod.install_script_extension(extensions_dir_path.plus_file("ui/menus/shop/coop_shop_player_container.gd"))
+	
+	ModLoaderMod.install_script_extension(extensions_dir_path.plus_file("ui/menus/run/end_run.gd"))
+	ModLoaderMod.install_script_extension(extensions_dir_path.plus_file("ui/menus/run/coop_end_run.gd"))
+	
 	ModLoaderMod.install_script_extension(extensions_dir_path.plus_file("ui/menus/global/popup_manager.gd"))
 
 	ModLoaderMod.install_script_extension(extensions_dir_path.plus_file("singletons/debug_service.gd"))

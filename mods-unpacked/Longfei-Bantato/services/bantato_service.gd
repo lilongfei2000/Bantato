@@ -7,6 +7,10 @@ class_name BantatoService
 const MOD_NAME = "Bantato"
 const MOD_LOG = "BantatoService"
 const NUM_TIER = 4
+# Translation keys for UI strings
+const STR_BANNED_ITEMS = "BANTATO_BANNED"
+const STR_SWITCH_TO_BANNED = "BANTATO_SWITCH_TO_BANNED"
+const STR_SWITCH_TO_ITEMS = "BANTATO_SWITCH_TO_ITEMS"
 
 const BantatoPlayerData = preload("res://mods-unpacked/Longfei-Bantato/services/bantato_player_data.gd")
 
@@ -191,6 +195,65 @@ func get_unbanned_pool(tier: int, type: int, player_index: int) -> Array:
 		Array of ItemParentData objects (not including banned items)
 	"""
 	return _players[player_index].get_unbanned_pool(tier, type)
+
+# ==================== Public API: UI ====================
+
+func setup_banned_items_container(items_container: InventoryContainer) -> InventoryContainer:
+	var banned_items_container = items_container.duplicate(15)
+	banned_items_container.visible = false
+
+	var parent = items_container.get_parent()
+	parent.add_child(banned_items_container) # add so that the children are available
+	parent.move_child(banned_items_container, items_container.get_index())
+
+	var button_on_items = add_button(items_container, STR_SWITCH_TO_BANNED)
+	var button_on_banned = add_button(banned_items_container, STR_SWITCH_TO_ITEMS)
+	button_on_items.connect("pressed", self, "switch_container", [items_container, banned_items_container, button_on_banned])
+	button_on_banned.connect("pressed", self, "switch_container", [items_container, banned_items_container, button_on_items])
+
+	return banned_items_container
+
+
+func add_button(items_container: InventoryContainer, text: String) -> Node:
+	"""Add a toggle button to a container."""
+	var toggle_button = MyMenuButton.new()
+	toggle_button.text = text
+	if RunData.is_coop_run:
+		toggle_button.add_font_override("font", preload("res://resources/fonts/actual/base/font_22.tres"))
+	else:
+		toggle_button.add_font_override("font", preload("res://resources/fonts/actual/base/font_26.tres"))
+	toggle_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	items_container._label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+
+	var hbox = items_container._label.get_parent()
+	hbox.add_child(toggle_button)
+	hbox.move_child(toggle_button, 0)
+
+	var sort_button = items_container.get_node("HBoxContainer/Sort_Inventory_button")
+	toggle_button.focus_neighbour_right = sort_button.get_path()
+	sort_button.focus_neighbour_left = toggle_button.get_path()
+
+	return toggle_button
+
+
+func switch_container(items_container: InventoryContainer, banned_items_container: InventoryContainer, next_button: MyMenuButton) -> void:
+	if items_container.visible:
+		items_container.visible = false
+		banned_items_container.visible = true
+		next_button.grab_focus()
+	else:
+		banned_items_container.visible = false
+		items_container.visible = true
+		next_button.grab_focus()
+
+
+func set_banned_data(items_container: InventoryContainer, banned_data: Dictionary) -> void:
+	items_container._label.text = STR_BANNED_ITEMS
+	items_container._elements.clear_elements()
+	for id in banned_data.keys():
+		var item = get_item_by_id(id)
+		var prevent_count = banned_data[id]
+		items_container._elements.add_element_with_count(item, prevent_count, false, 0.5)
 
 # ==================== Public API: Lifecycle ====================
 
