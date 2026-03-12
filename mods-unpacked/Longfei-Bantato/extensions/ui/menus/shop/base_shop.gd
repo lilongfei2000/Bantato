@@ -25,7 +25,7 @@ func _ready() -> void:
 # --- Overwrites ---
 func on_shop_item_banned(shop_item: ShopItem, player_index: int) -> void :
 	.on_shop_item_banned(shop_item, player_index)
-	BantatoService.update_ban_num(shop_item.item_data)
+	BantatoService.update_ban_num(shop_item.item_data, player_index)
 	_get_shop_items_container(player_index).reload_shop_items()
 
 
