@@ -19,7 +19,7 @@ func bantato_set_banned_data(banned_data: Dictionary) -> void:
 func bantato_add_to_banned_container(item: ItemParentData) -> void:
 	"""Add an item to the Bantato banned items container."""
 	if _bantato_item_index.has(item.my_id):
-		var banned_items = bantato_banned_items_container._elements.get_children()
+		var banned_items = bantato_banned_items_container._elements.order_of_addition
 		var index = _bantato_item_index[item.my_id]
 		banned_items[index].add_to_number()
 	else:
