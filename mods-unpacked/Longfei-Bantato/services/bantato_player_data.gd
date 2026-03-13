@@ -4,8 +4,6 @@ extends Reference
 
 const MOD_NAME = "Bantato"
 const MOD_LOG = "BantatoPlayerData"
-const NB_SHOP_ITEMS = 4
-const MIN_UNBANNED_NUM = NB_SHOP_ITEMS * 2
 
 # Banned items for this player with prevent counters
 # Structure: {item_id: int}
@@ -49,9 +47,13 @@ func is_banned(item: ItemParentData) -> bool:
 	return _banned_data.has(item.my_id)
 
 
-func is_bannable(item: ItemParentData) -> bool:
+func get_banned_data() -> Dictionary:
+	return _banned_data
+
+
+func get_bannable_num_of(item: ItemParentData) -> int:
 	var type = 1 if item is WeaponData else 0
-	return _bannable_nums[item.tier][type] > MIN_UNBANNED_NUM
+	return _bannable_nums[item.tier][type]
 
 
 func get_ban_price(shop_item: ShopItem) -> int:
@@ -59,10 +61,6 @@ func get_ban_price(shop_item: ShopItem) -> int:
 	var tier = shop_item.item_data.tier
 	var bannable_num = _bannable_nums[tier][type]
 	return max(1, float(shop_item.value) / (bannable_num - 1)) as int
-
-
-func get_banned_data() -> Dictionary:
-	return _banned_data
 
 
 func get_unbanned_pool(_tier: int, _type: int):

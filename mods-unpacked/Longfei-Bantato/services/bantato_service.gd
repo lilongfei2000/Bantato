@@ -7,6 +7,8 @@ class_name BantatoService
 const MOD_NAME = "Bantato"
 const MOD_LOG = "BantatoService"
 const NUM_TIER = 4
+const NB_SHOP_ITEMS = 4
+const MIN_UNBANNED_LIMIT = NB_SHOP_ITEMS * 2
 # Translation keys for UI strings
 const STR_BANNED_ITEMS = "BANTATO_BANNED"
 const STR_SWITCH_TO_BANNED = "BANTATO_SWITCH_TO_BANNED"
@@ -167,10 +169,6 @@ func is_bannable(item: ItemParentData, player_index: int) -> bool:
 	"""
 	Check if an item can be banned.
 
-	Requirements:
-	- Item is not already banned
-	- At least MIN_UNBANNED_NUM items of this tier/type remain
-
 	Args:
 		item: The item to check
 		player_index: The player's index (0-3)
@@ -178,8 +176,15 @@ func is_bannable(item: ItemParentData, player_index: int) -> bool:
 	Returns:
 		True if the item can be banned, false otherwise
 	"""
-	# Check if already banned
-	return _players[player_index].is_bannable(item)
+	var player_data = RunData.players_data[player_index]
+	if player_data.current_character.my_id_hash == Keys.character_fisherman_hash and item.my_id_hash == Keys.item_bait_hash:
+		return false
+	var remains = _players[player_index].get_bannable_num_of(item)
+	var min_unbanned_limit = MIN_UNBANNED_LIMIT
+	# adjust the limit according to the vanilla ban system
+	if item is ItemData and ChallengeService.is_challenge_completed(ChallengeService.chal_banned_items_hash) and RunData.is_ban_active_in_current_run():
+		min_unbanned_limit += player_data.remaining_ban_token
+	return remains > min_unbanned_limit
 
 
 func get_unbanned_pool(tier: int, type: int, player_index: int) -> Array:
