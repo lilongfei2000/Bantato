@@ -179,6 +179,8 @@ func is_bannable(item: ItemParentData, player_index: int) -> bool:
 	var player_data = RunData.players_data[player_index]
 	if player_data.current_character.my_id_hash == Keys.character_fisherman_hash and item.my_id_hash == Keys.item_bait_hash:
 		return false
+	if item is ItemData and item.max_nb != -1:
+		return true
 	var remains = _players[player_index].get_bannable_num_of(item)
 	var min_unbanned_limit = MIN_UNBANNED_LIMIT
 	# adjust the limit according to the vanilla ban system
