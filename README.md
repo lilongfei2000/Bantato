@@ -7,10 +7,12 @@
 ## 说明
 
 - 在商店每个物品上方增加了一个花费金币禁用该物品的按钮，禁用后该物品不会再在商店中出现。
-- 不同等级的武器被视作不同的物品。
-- 每个等级的武器/物品剩余未禁用数目小于等于8个时无法继续禁用。
 - 可以查看已禁用的物品及其被阻止出现的次数。
 - 支持合作模式。
+- 兼容游戏本体自带的禁用系统。
+- 不同等级的武器被视作不同的物品。
+- 存在道具池最低剩余数量保护，不同等级与类别（武器/物品）独立计算。
+
 - **可能与部分mod不兼容。**
 
 
@@ -22,8 +24,10 @@ Hi! This is a MOD made for *Brotato* that added a feature to **ban items in the 
 ## Postscript
 
 - Add a button above each item in the shop to spend golds banning it. After banning the item, it will no longer appear in the shop.
-- Different levels of weapons are treated as different items.
-- Items / Weapons of a certain quality cannot be banned when the number of available items is equal to or less than 8.
 - View items that have been disabled and the number of times they were blocked from appearing.
 - Support Coop Mode.
+- Compatible with the vanilla ban system.
+- Different levels of weapons are treated as different items.
+- Item pools are protected by a minimum remaining quantity. These limits are tracked separately across different levels and types (Weapons vs. Items).
+
 - **Probably not compatible with some other mods.**
