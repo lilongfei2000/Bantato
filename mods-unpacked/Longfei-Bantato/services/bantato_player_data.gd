@@ -23,15 +23,33 @@ func _init(data: Dictionary = {}, nums: Array = []) -> void:
 func ban(item: ItemParentData) -> void:
 	"""Ban an item and remove it from pools."""
 	_banned_data[item.my_id] = 1
-	update_bannable_num(item)
+	update_bannable_num_by_item(item)
 
 
-func update_bannable_num(item: ItemParentData) -> void:
+func update_bannable_num_by_item(item: ItemParentData) -> void:
 	if item is ItemData:
 		if item.max_nb == -1:
 			_bannable_nums[item.tier][0] -= 1
 	elif item is WeaponData:
 		_bannable_nums[item.tier][1] -= 1
+
+
+func update_bannable_num_by_pool(pool: Array) -> void:
+	if pool.size() == 0:
+		ModLoaderLog.warning("Empty pool.", MOD_LOG)
+		return
+	var bannable_num = pool.size()
+	var item = pool[0]
+	if item is ItemData:
+		for e in pool:
+			if is_banned(e) or e.max_nb != -1:
+				bannable_num -= 1
+		_bannable_nums[item.tier][0] = bannable_num
+	elif item is WeaponData:
+		for e in pool:
+			if is_banned(e):
+				bannable_num -= 1
+		_bannable_nums[item.tier][1] = bannable_num
 
 
 func unban(_item_id: String):

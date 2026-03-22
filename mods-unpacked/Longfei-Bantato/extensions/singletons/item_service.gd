@@ -8,6 +8,13 @@ func _get_rand_item_for_wave(wave: int, player_index: int, type: int, args: GetR
 	var pools = bantato_get_rand_item_pool(wave, player_index, type, args)
 	var pool = pools[0]
 	var backup_pool = pools[1]
+
+	BantatoService.update_bannable_num_by_pool(backup_pool, player_index)
+
+	# Update shop effects after updating the bannable nums
+	for shop_item in args.excluded_items:
+		pool = remove_element_by_id_with_item(pool, shop_item[0])
+		backup_pool = remove_element_by_id_with_item(pool, shop_item[0])
 	
 	#var elt = BantatoService.get_rand_item_remove(pool, backup_pool, player_index)
 	var elt = BantatoService.get_rand_item_retry(pool, backup_pool, player_index)
@@ -58,10 +65,6 @@ func bantato_get_rand_item_pool(wave: int, player_index: int, type: int, args: G
 
 
 	
-	for shop_item in args.excluded_items:
-		pool = remove_element_by_id_with_item(pool, shop_item[0])
-		backup_pool = remove_element_by_id_with_item(pool, shop_item[0])
-
 	if type == TierData.WEAPONS:
 		var bonus_chance_same_weapon_set = max(0, (MAX_WAVE_ONE_WEAPON_GUARANTEED + 1 - RunData.current_wave) * (BONUS_CHANCE_SAME_WEAPON_SET / MAX_WAVE_ONE_WEAPON_GUARANTEED))
 		var chance_same_weapon_set = CHANCE_SAME_WEAPON_SET + bonus_chance_same_weapon_set

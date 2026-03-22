@@ -65,8 +65,12 @@ func ban(shop_item: ShopItem, player_index: int) -> void:
 	RunData.remove_gold(shop_item.bantato_ban_value, player_index)
 
 
-func update_ban_num(item: ItemParentData, player_index: int) -> void:
-	_players[player_index].update_bannable_num(item)
+func update_bannable_num_by_item(item: ItemParentData, player_index: int) -> void:
+	_players[player_index].update_bannable_num_by_item(item)
+
+
+func update_bannable_num_by_pool(pool: Array, player_index: int) -> void:
+	_players[player_index].update_bannable_num_by_pool(pool)
 
 
 func unban(_item_id: String, _player_index: int) -> void:
