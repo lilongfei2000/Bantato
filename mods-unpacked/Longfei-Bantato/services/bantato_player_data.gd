@@ -74,13 +74,6 @@ func get_bannable_num_of(item: ItemParentData) -> int:
 	return _bannable_nums[item.tier][type]
 
 
-func get_ban_price(shop_item: ShopItem) -> int:
-	var type = 1 if shop_item.item_data is WeaponData else 0
-	var tier = shop_item.item_data.tier
-	var bannable_num = _bannable_nums[tier][type]
-	return max(1, float(shop_item.value) / (bannable_num - 1)) as int
-
-
 func get_unbanned_pool(_tier: int, _type: int):
 	"""Get the pool of unbanned items for a specific tier and type."""
 	pass

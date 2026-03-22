@@ -155,18 +155,22 @@ func get_prevent_count(item_id: String, player_index: int) -> int:
 	return _players[player_index].get_prevent_count(item_id)
 
 
-func get_ban_price(item: ShopItem, player_index: int) -> int:
+func get_ban_price(shop_item: ShopItem, player_index: int) -> int:
 	"""
 	Calculate the gold cost to ban an item.
 
 	Args:
-		item: The item to calculate price for
+		shop_item: The item to calculate price for
 		player_index: The player's index (0-3)
 
 	Returns:
 		The gold cost (minimum 1)
 	"""
-	return _players[player_index].get_ban_price(item)
+	var tier = shop_item.item_data.tier
+	var bannable_num = _players[player_index].get_bannable_num_of(shop_item.item_data)
+	var reroll_price = ItemService.get_reroll_price(RunData.current_wave, 0, player_index)[0]
+	var ban_price = (shop_item.value + reroll_price) * (tier + 1) * 2.0 / (bannable_num - 1)
+	return max(1, ban_price) as int
 
 
 func is_bannable(item: ItemParentData, player_index: int) -> bool:
