@@ -14,7 +14,7 @@ func _get_rand_item_for_wave(wave: int, player_index: int, type: int, args: GetR
 	# Update shop effects after updating the bannable nums
 	for shop_item in args.excluded_items:
 		pool = remove_element_by_id_with_item(pool, shop_item[0])
-		backup_pool = remove_element_by_id_with_item(pool, shop_item[0])
+		backup_pool = remove_element_by_id_with_item(backup_pool, shop_item[0])
 	
 	#var elt = BantatoService.get_rand_item_remove(pool, backup_pool, player_index)
 	var elt = BantatoService.get_rand_item_retry(pool, backup_pool, player_index)
