@@ -1,7 +1,7 @@
 {
 	"name": "Bantato",
 	"namespace": "Longfei",
-	"version_number": "2.0.0",
+	"version_number": "2.1.1",
 	"description": "A mod for Brotato that adds a gold-based item/weapon banning system. Works alongside the game's built-in token-based ban system.",
 	"website_url": "https://github.com/lilongfei2000/Bantato",
 	"dependencies": [],
