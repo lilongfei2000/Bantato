@@ -1,5 +1,8 @@
 # Bantato
 
+> Steam Workshop: https://steamcommunity.com/sharedfiles/filedetails/?id=2954868400
+> 兼容 / Compatible: Brotato 1.1.14.5, ModLoader 6.3.0
+
 ## 简介 
 
 嗨！这是一个为游戏《土豆兄弟》制作的MOD，加入了**在商店中禁用物品**的功能。尽管我已经进行了很多的测试并修复了很多的bug，我仍然不敢保证没有其他的问题了。**！！保险起见在开始前尽量先备份您的存档！！**欢迎评论，祝大家玩得愉快！
@@ -31,3 +34,24 @@ Hi! This is a MOD made for *Brotato* that added a feature to **ban items in the 
 - Item pools are protected by a minimum remaining quantity. These limits are tracked separately across different levels and types (Weapons vs. Items).
 
 - **Probably not compatible with some other mods.**
+
+## 更新日志 / Changelog
+
+### 2.1.1
+
+- 适配 Brotato 1.1.14.5 与本体 ban 系统
+- 重做禁用价格与可禁判定
+- 新增已禁物品列表、拦截次数、结算界面显示
+- 修复合作模式恢复、玩家数据数量、选池等问题
+
+### 2.0.0
+
+- 重构为 BantatoService 独立服务架构
+
+## License / 许可
+
+本项目采用自定义许可：允许个人使用和本地修改；未经作者书面同意，禁止发布、再发布、上传到任何平台、打包进整合包或用于商业用途。商业使用需事先获得授权。
+
+Brotato 本体及其代码、素材版权归 Blobfish 所有，本仓库不主张其所有权。
+
+完整条款见 [LICENSE](LICENSE)。This project is source-available, not open source.

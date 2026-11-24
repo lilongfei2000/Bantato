@@ -1,0 +1,13 @@
+# Godot import cache
+.import/
+
+# Release artifacts
+*.zip
+
+# Editor / tooling
+.vscode/
+.opencode/
+
+# OS files
+.DS_Store
+Thumbs.db
